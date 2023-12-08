@@ -6,11 +6,11 @@ app.use(cors()) // CORSを全てのルートに適用する
 const mysql = require('mysql')
 
 const connection = mysql.createConnection({
-  host: process.env.RDS_HOSTNAME,
-  user: process.env.RDS_USERNAME,
-  password: process.env.RDS_PASSWORD,
-  port: process.env.RDS_POR,
-  database: process.env.RDS_DATABASE,
+  host: 'rds-mysql-pikatore.cn7rjsqtbrnm.ap-northeast-1.rds.amazonaws.com',
+  user: 'admin',
+  password: 'L4r7nUzT',
+  port: '3306',
+  database: 'pikatore_db',
 })
 
 app.get('/users', (request, response) => {
@@ -21,6 +21,6 @@ app.get('/users', (request, response) => {
   })
 })
 
-const port = process.env.PORT || 8081
+const port = 8081
 
 app.listen(port, () => console.log(`Listening on port ${port}...`))
