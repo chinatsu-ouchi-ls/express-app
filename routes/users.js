@@ -17,7 +17,7 @@ router.get('/', (req, res, next) => {
 // 新しいユーザーを追加するルート
 router.post('/add', (req, res, next) => {
   const { name } = req.body
-  const sql = 'INSERT INTO users (name) VALUES (?, ?)'
+  const sql = 'INSERT INTO users (name) VALUES (?)'
 
   connection.query(sql, [name], (err, result) => {
     if (err) {

@@ -1,7 +1,10 @@
+require('dotenv').config()
+
 const express = require('express')
 const cors = require('cors')
 const app = express()
 app.use(cors()) // CORSを全てのルートに適用する
+app.use(express.json()) // JSONミドルウェアを追加する
 
 const users = require('./routes/users')
 

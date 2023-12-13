@@ -1,11 +1,11 @@
 const mysql = require('mysql')
 
 const connection = mysql.createConnection({
-  host: 'rds-mysql-pikatore.cn7rjsqtbrnm.ap-northeast-1.rds.amazonaws.com',
-  user: 'admin',
-  password: 'L4r7nUzT',
-  port: '3306',
-  database: 'pikatore_db',
+  host: process.env.RDS_HOSTNAME,
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  port: process.env.RDS_PORT,
+  database: process.env.RDS_DB_NAME,
 })
 
 module.exports = { connection }
