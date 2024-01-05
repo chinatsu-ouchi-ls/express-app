@@ -6,13 +6,15 @@ const app = express()
 app.use(cors()) // CORSを全てのルートに適用する
 app.use(express.json()) // JSONミドルウェアを追加する
 
-const users = require('./routes/users')
+const users = require('./routes/user/users')
+const adminUsers = require('./routes/adminUser')
 
 app.get('/', (request, response) => {
   response.send('Hello from Express!')
 })
 
 app.use('/users', users)
+app.use('/admin/users', adminUsers)
 
 const port = process.env.PORT || 8081
 
