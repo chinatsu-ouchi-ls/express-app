@@ -6,6 +6,12 @@ const MASSAGE = {
     MASSAGE_004: '研修は見つかりませんでした。',
     MASSAGE_005: '無効なユーザーIDまたは研修IDです',
   },
+  LOGIN: {
+    MASSAGE_001: '内部サーバーエラーが発生しました。システムの問題により処理を完了できませんでした。',
+    MASSAGE_002: 'メールアドレスが違います。',
+    MASSAGE_003: 'パスワードが違います。',
+    MASSAGE_004: 'メールアドレスとパスワードは必須です。',
+  },
 }
 
 module.exports = MASSAGE
