@@ -32,6 +32,9 @@ const MASSAGE = {
   CATEGORY: {
     MASSAGE_001: '内部サーバーエラーが発生しました。システムの問題により処理を完了できませんでした。',
   },
+  DEPT: {
+    MASSAGE_001: '内部サーバーエラーが発生しました。システムの問題により処理を完了できませんでした。',
+  },
 }
 
 module.exports = MASSAGE
