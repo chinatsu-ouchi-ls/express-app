@@ -24,14 +24,20 @@ router.get('/', (req, res) => {
 
     // 部門と職種を整理
     const depts = results.reduce((acc, row) => {
+      // 現在の行に対応する部門を探す
       let dept = acc.find((d) => d.id === row.deptId)
+
+      // 該当する部門がない場合、新しい部門を作成して結果配列に追加
       if (!dept) {
         dept = { id: row.deptId, name: row.deptName, jobCategories: [] }
         acc.push(dept)
       }
+
+      // 該当する職種がある場合、その職種を部門の職種リストに追加
       if (row.jobCategoryId) {
         dept.jobCategories.push({ id: row.jobCategoryId, name: row.jobCategoryName })
       }
+      
       return acc
     }, [])
 
