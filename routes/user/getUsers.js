@@ -3,7 +3,9 @@ const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
 const getUsers = (req, res) => {
-  const sql = 'SELECT * FROM USER'
+  // is_adminが0でdeleted_atがnullのユーザーのみを取得するSQLクエリ
+  const sql = 'SELECT * FROM USER WHERE is_admin = 0 AND deleted_at IS NULL'
+
   connection.query(sql, (err, result) => {
     if (err) {
       console.error('Database error: ', err)

@@ -5,42 +5,43 @@ const MASSAGE = require('../common/message')
 const router = express.Router()
 
 router.post('/', (req, res) => {
-  const { mailAddress, password } = req.body
+  const { accountId, password } = req.body
 
   // バリデーションチェック
-  if (!mailAddress || !password) {
-    return sendResponse(res, 400, { message: MASSAGE.LOGIN.MASSAGE_004 })
+  if (!accountId || !password) {
+    return sendResponse(res, 400, { message: MASSAGE.LOGIN.MASSAGE_006 })
   }
 
-  // 管理者ではないユーザーのみを取得するSQLクエリ
+  // 管理者ユーザーを取得するSQLクエリ
   const sql = 'SELECT id, password, is_admin FROM USER WHERE mail_address = ?'
 
-  connection.query(sql, [mailAddress], (err, results) => {
+  connection.query(sql, [accountId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
       return sendResponse(res, 500, { message: MASSAGE.LOGIN.MASSAGE_001 })
     }
 
     if (results.length === 0) {
-      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_002 })
+      // アカウントが存在しない場合
+      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_008 })
     }
 
-    const user = results[0]
-
-    // 管理者の場合はエラーを返す
-    if (user.is_admin === 1) {
-      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_005 })
+    if (results[0].is_admin !== 1) {
+      // 管理者でない場合
+      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_007 })
     }
+
+    const adminUser = results[0]
 
     // パスワードの検証（平文の比較）
-    if (password !== user.password) {
+    if (password !== adminUser.password) {
       return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_003 })
     }
 
     // レスポンスの組み立て
     const response = {
       status: 200,
-      userId: user.id,
+      message: MASSAGE.LOGIN.MASSAGE_009,
     }
 
     // レスポンス

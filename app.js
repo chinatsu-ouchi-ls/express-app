@@ -9,6 +9,7 @@ app.use(express.json()) // JSONミドルウェアを追加する
 const users = require('./routes/user/users')
 const adminUsers = require('./routes/adminUser')
 const login = require('./routes/login')
+const adminLogin = require('./routes/adminLogin')
 const postTest = require('./routes/postTest')
 const postEnquete = require('./routes/postEnquete')
 
@@ -19,6 +20,7 @@ app.get('/', (request, response) => {
 app.use('/users', users)
 app.use('/admin/users', adminUsers)
 app.use('/login', login)
+app.use('/admin/login', adminLogin)
 app.use('/test/result', postTest)
 app.use('/enquete/result', postEnquete)
 
