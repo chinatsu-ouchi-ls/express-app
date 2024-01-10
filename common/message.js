@@ -29,6 +29,9 @@ const MASSAGE = {
     MASSAGE_003: 'アンケートはすでに実施されています。',
     MASSAGE_004: 'アンケート結果が正常に送信されました。',
   },
+  CATEGORY: {
+    MASSAGE_001: '内部サーバーエラーが発生しました。システムの問題により処理を完了できませんでした。',
+  },
 }
 
 module.exports = MASSAGE
