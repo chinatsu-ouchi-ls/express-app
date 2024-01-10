@@ -7,6 +7,7 @@ const getUserMaterials = require('./getUserMaterials')
 const getUserMaterial = require('./getUserMaterial')
 const deleteUser = require('./deleteUser')
 const createUser = require('./createUser')
+const editUser = require('./editUser')
 
 // ユーザー一覧の取得
 router.get('/', getUsers)
@@ -25,6 +26,9 @@ router.delete('/:userId', deleteUser)
 
 // ユーザー新規作成
 router.post('/', createUser)
+
+// ユーザー編集
+router.put('/:userId', editUser)
 
 
 module.exports = router
