@@ -40,8 +40,16 @@ RDS_PORT=<DBポート>
   npm run dev
   ```
 - **本番環境**: 最初に`prod-db`サーバーを起動し、次に以下を実行します：
+
   ```bash
   npm run start
+  ```
+
+### SSH キー設定 (本番環境)
+
+- 本番環境では SSH キーを使用して RDS に接続する必要があります。以下のコマンド例を参考にして、必要な情報を編集して実行します。
+  ```
+  ssh -L 3307:prob-db.cn7rjsqtbrnm.ap-northeast-1.rds.amazonaws.com:3306 ec2-user@54.249.59.11 -i /path/to/your/pikatore-rds.pem
   ```
 
 ## ブランチルール
