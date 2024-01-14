@@ -22,11 +22,11 @@ const getMaterials = (req, res) => {
       m.best_score AS bestScore,
       GROUP_CONCAT(DISTINCT jc.id SEPARATOR ', ') AS jobCategoryIds,
       GROUP_CONCAT(DISTINCT jc.name SEPARATOR ', ') AS jobCategoryNames
-    FROM
-        MATERIAL m
-        JOIN CATEGORY c ON m.category_id = c.id
-        LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.material_id
-        LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
+    FROM MATERIAL m
+    JOIN CATEGORY c ON m.category_id = c.id
+    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.material_id
+    LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
+    WHERE m.deleted_at IS NULL
     GROUP BY m.id
   `
 
