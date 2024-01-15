@@ -142,7 +142,7 @@ const editMaterial = (req, res) => {
           })
 
           // 最終的なレスポンスを返す
-          sendResponse(res, 200, { message: '研修が更新されました' })
+          sendResponse(res, 200, { message: MASSAGE.MATERIAL.MASSAGE_005 })
         })
       }
     )
