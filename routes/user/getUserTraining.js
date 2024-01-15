@@ -32,7 +32,7 @@ const getUserTraining = (req, res) => {
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt
-    FROM MATERIAL m
+    FROM TRAINING m
     LEFT JOIN CATEGORY c ON m.category_id = c.id
     LEFT JOIN USER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.user_id = ?
     LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.user_id = ?

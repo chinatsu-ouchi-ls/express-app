@@ -34,9 +34,9 @@ const getTrainingDetail = (req, res) => {
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt,
       DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH) AS timeLimitAt
-    FROM MATERIAL m
+    FROM TRAINING m
     JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
+    LEFT JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
     LEFT JOIN USER u ON jc.id = u.job_category_id AND u.is_admin = 0 AND u.deleted_at IS NULL
     LEFT JOIN DEPT d ON u.dept_id = d.id
@@ -48,11 +48,11 @@ const getTrainingDetail = (req, res) => {
   connection.query(sql, [trainingId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+      return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
     }
 
     if (results.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.MATERIAL.MASSAGE_002 })
+      return sendResponse(res, 404, { message: MASSAGE.TRAINING.MASSAGE_002 })
     }
 
     // 研修の基本情報を取得

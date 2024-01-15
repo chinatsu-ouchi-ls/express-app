@@ -22,9 +22,9 @@ const getTrainings = (req, res) => {
       m.best_score AS bestScore,
       GROUP_CONCAT(DISTINCT jc.id SEPARATOR ', ') AS jobCategoryIds,
       GROUP_CONCAT(DISTINCT jc.name SEPARATOR ', ') AS jobCategoryNames
-    FROM MATERIAL m
+    FROM TRAINING m
     JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
+    LEFT JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
     WHERE m.deleted_at IS NULL
     GROUP BY m.id
@@ -33,7 +33,7 @@ const getTrainings = (req, res) => {
   connection.query(sql, (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+      return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
     }
 
     const trainings = results.map((row) => {

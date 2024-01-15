@@ -28,7 +28,7 @@ const createTraining = (req, res) => {
     !viewableJobCategoryIds ||
     viewableJobCategoryIds.length === 0
   ) {
-    return sendResponse(res, 400, { message: MASSAGE.MATERIAL.MASSAGE_003 })
+    return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_003 })
   }
 
   // isRequired を数値に変換
@@ -39,18 +39,18 @@ const createTraining = (req, res) => {
   connection.query(categoryCheckSql, [categoryId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+      return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
     }
 
     // 指定されたcategoryIdが存在しない場合
     if (results.length === 0) {
-      return sendResponse(res, 400, { message: MASSAGE.MATERIAL.MASSAGE_004 })
+      return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_004 })
     }
 
     // categoryIdが存在する場合
-    // 研修をMATERIALテーブルに追加
+    // 研修をTRAININGテーブルに追加
     const trainingSql = `
-      INSERT INTO MATERIAL (
+      INSERT INTO TRAINING (
         name,
         is_required,
         category_id,
@@ -86,21 +86,21 @@ const createTraining = (req, res) => {
       (err, result) => {
         if (err) {
           console.error('Database error: ', err)
-          return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+          return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
         }
 
         const trainingId = result.insertId
 
-        // MATERIAL_JOB_CATEGORY_VIEWABLE にデータを追加
+        // TRAINING_JOB_CATEGORY_VIEWABLE にデータを追加
         const viewableSql = `
-        INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES ?
+        INSERT INTO TRAINING_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES ?
       `
         const viewableValues = viewableJobCategoryIds.map((jobCategoryId) => [trainingId, jobCategoryId])
 
         connection.query(viewableSql, [viewableValues], (err, viewableResult) => {
           if (err) {
             console.error('Database error: ', err)
-            return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+            return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
           }
 
           sendResponse(res, 200, { trainingId })

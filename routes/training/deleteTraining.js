@@ -8,7 +8,7 @@ const deleteTraining = (req, res) => {
 
   // 研修データのdeleted_atを現在の日時に設定するSQLクエリ
   const deleteSql = `
-    UPDATE MATERIAL
+    UPDATE TRAINING
     SET deleted_at = NOW()
     WHERE id = ?
   `
@@ -18,11 +18,11 @@ const deleteTraining = (req, res) => {
     // データベースエラーの処理
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+      return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
     }
 
     // 研修が論理削除されたことを示すレスポンスを返す
-    sendResponse(res, 200, { message: MASSAGE.MATERIAL.MASSAGE_006 })
+    sendResponse(res, 200, { message: MASSAGE.TRAINING.MASSAGE_006 })
   })
 }
 

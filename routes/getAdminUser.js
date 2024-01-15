@@ -51,8 +51,8 @@ router.get('/:userId', (req, res) => {
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt
     FROM USER u
-    JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
-    JOIN MATERIAL m ON m.id = mjcv.training_id
+    JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
+    JOIN TRAINING m ON m.id = mjcv.training_id
     LEFT JOIN CATEGORY c ON c.id = m.category_id
     LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.training_id = m.id
     LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.training_id = m.id

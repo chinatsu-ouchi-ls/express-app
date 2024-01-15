@@ -32,7 +32,7 @@ const editTraining = (req, res) => {
     !viewableJobCategoryIds ||
     viewableJobCategoryIds.length === 0
   ) {
-    return sendResponse(res, 400, { message: MASSAGE.MATERIAL.MASSAGE_003 })
+    return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_003 })
   }
 
   // isRequired を数値に変換
@@ -44,18 +44,18 @@ const editTraining = (req, res) => {
   connection.query(categoryCheckSql, [categoryId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+      return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
     }
 
     // 指定されたcategoryIdが存在しない場合
     if (results.length === 0) {
-      return sendResponse(res, 400, { message: MASSAGE.MATERIAL.MASSAGE_004 })
+      return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_004 })
     }
 
     // categoryIdが存在する場合
     // 研修データを更新するSQLクエリ
     const updateSql = `
-    UPDATE MATERIAL
+    UPDATE TRAINING
     SET 
       name = ?,
       is_required = ?,
@@ -95,17 +95,17 @@ const editTraining = (req, res) => {
         // データベースエラーの処理
         if (err) {
           console.error('Database error: ', err)
-          return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+          return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
         }
 
-        // MATERIAL_JOB_CATEGORY_VIEWABLEテーブルの既存のデータを取得するSQLクエリ
-        const existingViewableSql = `SELECT job_category_id FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE training_id = ?`
+        // TRAINING_JOB_CATEGORY_VIEWABLEテーブルの既存のデータを取得するSQLクエリ
+        const existingViewableSql = `SELECT job_category_id FROM TRAINING_JOB_CATEGORY_VIEWABLE WHERE training_id = ?`
 
         // SQLクエリを実行して既存の職種IDを取得
         connection.query(existingViewableSql, [trainingId], (err, existingJobCategories) => {
           if (err) {
             console.error('Database error: ', err)
-            return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+            return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
           }
 
           // 取得した職種IDを配列に変換
@@ -119,11 +119,11 @@ const editTraining = (req, res) => {
 
           // 新規追加する職種IDの処理
           jobCategoriesToAdd.forEach((jobCategoryId) => {
-            const insertViewableSql = `INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES (?, ?)`
+            const insertViewableSql = `INSERT INTO TRAINING_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES (?, ?)`
             connection.query(insertViewableSql, [trainingId, jobCategoryId], (err, insertResult) => {
               if (err) {
                 console.error('Database error: ', err)
-                return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+                return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
               }
               // 追加成功した場合
             })
@@ -131,18 +131,18 @@ const editTraining = (req, res) => {
 
           // 削除する職種IDの処理
           jobCategoriesToRemove.forEach((jobCategoryId) => {
-            const deleteViewableSql = `DELETE FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE training_id = ? AND job_category_id = ?`
+            const deleteViewableSql = `DELETE FROM TRAINING_JOB_CATEGORY_VIEWABLE WHERE training_id = ? AND job_category_id = ?`
             connection.query(deleteViewableSql, [trainingId, jobCategoryId], (err, deleteResult) => {
               if (err) {
                 console.error('Database error: ', err)
-                return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
+                return sendResponse(res, 500, { message: MASSAGE.TRAINING.MASSAGE_001 })
               }
               // 削除成功した場合
             })
           })
 
           // 最終的なレスポンスを返す
-          sendResponse(res, 200, { message: MASSAGE.MATERIAL.MASSAGE_005 })
+          sendResponse(res, 200, { message: MASSAGE.TRAINING.MASSAGE_005 })
         })
       }
     )

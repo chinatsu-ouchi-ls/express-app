@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
   }
 
   // 合格点数を確認するためのSQLクエリ
-  const checkPassingScoreSql = 'SELECT passing_score FROM MATERIAL WHERE id = ?'
+  const checkPassingScoreSql = 'SELECT passing_score FROM TRAINING WHERE id = ?'
 
   connection.query(checkPassingScoreSql, [trainingId], (err, trainingResults) => {
     if (err) {
