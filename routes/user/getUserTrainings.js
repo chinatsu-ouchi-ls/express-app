@@ -18,7 +18,6 @@ const getUserTrainings = (req, res) => {
       m.is_required AS isRequired,
       c.id AS categoryId,
       c.name AS categoryName,
-      m.indication_period AS indicationPeriod,
       m.indication_time AS indicationTime,
       m.media,
       m.url,
@@ -30,7 +29,8 @@ const getUserTrainings = (req, res) => {
       IFNULL(uec.id, 0) AS enqueteStatus,
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
-      uec.updated_at AS enqueteUpdateAt
+      uec.updated_at AS enqueteUpdateAt,
+      DATE_FORMAT(DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH), '%Y/%m/%d %H:%i:%s') AS timeLimitAt
     FROM USER u
     JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
     JOIN TRAINING m ON m.id = mjcv.training_id
@@ -40,6 +40,7 @@ const getUserTrainings = (req, res) => {
     WHERE u.id = ?
   `
 
+  // SQLクエリを実行してユーザーの研修一覧を取得
   connection.query(sql, [userId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
@@ -49,15 +50,16 @@ const getUserTrainings = (req, res) => {
       return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
     }
 
+    // 結果を整形してレスポンスに設定
     const trainings = results.map((row) => ({
       id: row.id,
       name: row.name,
-      isRequired: row.isRequired,
+      isRequired: row.isRequired === 1,
       category: {
         id: row.categoryId,
         name: row.categoryName,
       },
-      indicationPeriod: row.indicationPeriod,
+      timeLimitAt: row.timeLimitAt,
       indicationTime: row.indicationTime,
       media: row.media,
       url: row.url,

@@ -19,7 +19,6 @@ const getUserTraining = (req, res) => {
       m.is_required AS isRequired,
       c.id AS categoryId,
       c.name AS categoryName,
-      m.indication_period AS indicationPeriod,
       m.indication_time AS indicationTime,
       m.media,
       m.url,
@@ -31,15 +30,17 @@ const getUserTraining = (req, res) => {
       COALESCE(uec.id, 0) AS enqueteStatus,
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
-      uec.updated_at AS enqueteUpdateAt
+      uec.updated_at AS enqueteUpdateAt,
+      DATE_FORMAT(DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH), '%Y/%m/%d %H:%i:%s') AS timeLimitAt
     FROM TRAINING m
     LEFT JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.user_id = ?
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.user_id = ?
+    LEFT JOIN USER u ON u.id = ?
+    LEFT JOIN USER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.user_id = u.id
+    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.user_id = u.id
     WHERE m.id = ?
   `
-
-  connection.query(sql, [userId, userId, trainingId], (err, result) => {
+  // SQLクエリを実行して研修詳細情報を取得
+  connection.query(sql, [userId, trainingId], (err, result) => {
     if (err) {
       console.error('Database error: ', err)
       return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
@@ -48,15 +49,16 @@ const getUserTraining = (req, res) => {
       return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
     }
 
+    // 結果を整形してレスポンスに設定
     const training = {
       id: result[0].id,
       name: result[0].name,
-      isRequired: result[0].isRequired,
+      isRequired: result[0].isRequired === 1,
       category: {
         id: result[0].categoryId,
         name: result[0].categoryName,
       },
-      indicationPeriod: result[0].indicationPeriod,
+      timeLimitAt: result[0].timeLimitAt,
       indicationTime: result[0].indicationTime,
       media: result[0].media,
       url: result[0].url,

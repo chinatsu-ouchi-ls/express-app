@@ -99,11 +99,10 @@ const getTrainingDetail = (req, res) => {
     eligibleUsers.sort((a, b) => a.id - b.id)
 
     // 返却する研修詳細情報
-    // 返却する研修詳細情報
     const training = {
       id: trainingBaseInfo.id,
       name: trainingBaseInfo.name,
-      isRequired: trainingBaseInfo.isRequired,
+      isRequired: trainingBaseInfo.isRequired === 1,
       category: {
         id: trainingBaseInfo.categoryId,
         name: trainingBaseInfo.categoryName,
