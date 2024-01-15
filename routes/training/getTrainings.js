@@ -2,7 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getMaterials = (req, res) => {
+const getTrainings = (req, res) => {
   const sql = `
     SELECT
       m.id,
@@ -24,7 +24,7 @@ const getMaterials = (req, res) => {
       GROUP_CONCAT(DISTINCT jc.name SEPARATOR ', ') AS jobCategoryNames
     FROM MATERIAL m
     JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.material_id
+    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
     WHERE m.deleted_at IS NULL
     GROUP BY m.id
@@ -36,7 +36,7 @@ const getMaterials = (req, res) => {
       return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
     }
 
-    const materials = results.map((row) => {
+    const trainings = results.map((row) => {
       const jobCategoryIds = row.jobCategoryIds ? row.jobCategoryIds.split(', ') : []
       const jobCategoryNames = row.jobCategoryNames ? row.jobCategoryNames.split(', ') : []
 
@@ -67,8 +67,8 @@ const getMaterials = (req, res) => {
       }
     })
 
-    sendResponse(res, 200, { materials })
+    sendResponse(res, 200, { trainings })
   })
 }
 
-module.exports = getMaterials
+module.exports = getTrainings

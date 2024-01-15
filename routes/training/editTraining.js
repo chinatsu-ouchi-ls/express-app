@@ -2,9 +2,9 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const editMaterial = (req, res) => {
+const editTraining = (req, res) => {
   // リクエストから研修IDを取得
-  const materialId = req.params.materialId
+  const trainingId = req.params.trainingId
 
   // リクエストボディから研修関連のデータを取得
   const {
@@ -89,7 +89,7 @@ const editMaterial = (req, res) => {
         enqueteResultUrl,
         passingScore,
         bestScore,
-        materialId, // WHERE句で使用する研修ID
+        trainingId, // WHERE句で使用する研修ID
       ],
       (err, result) => {
         // データベースエラーの処理
@@ -99,10 +99,10 @@ const editMaterial = (req, res) => {
         }
 
         // MATERIAL_JOB_CATEGORY_VIEWABLEテーブルの既存のデータを取得するSQLクエリ
-        const existingViewableSql = `SELECT job_category_id FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE material_id = ?`
+        const existingViewableSql = `SELECT job_category_id FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE training_id = ?`
 
         // SQLクエリを実行して既存の職種IDを取得
-        connection.query(existingViewableSql, [materialId], (err, existingJobCategories) => {
+        connection.query(existingViewableSql, [trainingId], (err, existingJobCategories) => {
           if (err) {
             console.error('Database error: ', err)
             return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
@@ -119,8 +119,8 @@ const editMaterial = (req, res) => {
 
           // 新規追加する職種IDの処理
           jobCategoriesToAdd.forEach((jobCategoryId) => {
-            const insertViewableSql = `INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (material_id, job_category_id) VALUES (?, ?)`
-            connection.query(insertViewableSql, [materialId, jobCategoryId], (err, insertResult) => {
+            const insertViewableSql = `INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES (?, ?)`
+            connection.query(insertViewableSql, [trainingId, jobCategoryId], (err, insertResult) => {
               if (err) {
                 console.error('Database error: ', err)
                 return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
@@ -131,8 +131,8 @@ const editMaterial = (req, res) => {
 
           // 削除する職種IDの処理
           jobCategoriesToRemove.forEach((jobCategoryId) => {
-            const deleteViewableSql = `DELETE FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE material_id = ? AND job_category_id = ?`
-            connection.query(deleteViewableSql, [materialId, jobCategoryId], (err, deleteResult) => {
+            const deleteViewableSql = `DELETE FROM MATERIAL_JOB_CATEGORY_VIEWABLE WHERE training_id = ? AND job_category_id = ?`
+            connection.query(deleteViewableSql, [trainingId, jobCategoryId], (err, deleteResult) => {
               if (err) {
                 console.error('Database error: ', err)
                 return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
@@ -149,4 +149,4 @@ const editMaterial = (req, res) => {
   })
 }
 
-module.exports = editMaterial
+module.exports = editTraining

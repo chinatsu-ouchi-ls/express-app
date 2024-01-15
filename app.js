@@ -15,7 +15,7 @@ app.use(cors()) // CORSを全てのルートに適用する
 app.use(express.json()) // JSONミドルウェアを追加する
 
 const users = require('./routes/user/users')
-const materials = require('./routes/material/materials')
+const trainings = require('./routes/training/trainings')
 const getAdminUser = require('./routes/getAdminUser')
 const login = require('./routes/login')
 const adminLogin = require('./routes/adminLogin')
@@ -29,7 +29,7 @@ app.get('/', (request, response) => {
 })
 
 app.use('/users', users)
-app.use('/materials', materials)
+app.use('/trainings', trainings)
 app.use('/admin/users', getAdminUser)
 app.use('/login', login)
 app.use('/admin/login', adminLogin)

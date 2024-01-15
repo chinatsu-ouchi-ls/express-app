@@ -30,7 +30,7 @@ router.get('/:userId', (req, res) => {
   `
 
   // ユーザーの研修一覧の取得
-  const materialsSql = `
+  const trainingsSql = `
     SELECT
       m.id,
       m.name,
@@ -52,10 +52,10 @@ router.get('/:userId', (req, res) => {
       uec.updated_at AS enqueteUpdateAt
     FROM USER u
     JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
-    JOIN MATERIAL m ON m.id = mjcv.material_id
+    JOIN MATERIAL m ON m.id = mjcv.training_id
     LEFT JOIN CATEGORY c ON c.id = m.category_id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.material_id = m.id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.material_id = m.id
+    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.training_id = m.id
+    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.training_id = m.id
     WHERE u.id = ?
   `
 
@@ -69,9 +69,9 @@ router.get('/:userId', (req, res) => {
     }
 
     // ユーザーの研修一覧を取得
-    connection.query(materialsSql, [userId], (materialsErr, materialsResult) => {
+    connection.query(trainingsSql, [userId], (trainingsErr, trainingsResult) => {
       // エラーハンドリング
-      if (materialsErr) {
+      if (trainingsErr) {
         return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
       }
 
@@ -80,7 +80,7 @@ router.get('/:userId', (req, res) => {
         status: 200,
         user: {
           ...userResult[0],
-          materials: materialsResult,
+          trainings: trainingsResult,
         },
       }
       sendResponse(res, 200, response)

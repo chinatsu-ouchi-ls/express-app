@@ -2,7 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const createMaterial = (req, res) => {
+const createTraining = (req, res) => {
   const {
     name,
     isRequired,
@@ -49,7 +49,7 @@ const createMaterial = (req, res) => {
 
     // categoryIdが存在する場合
     // 研修をMATERIALテーブルに追加
-    const materialSql = `
+    const trainingSql = `
       INSERT INTO MATERIAL (
         name,
         is_required,
@@ -67,7 +67,7 @@ const createMaterial = (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
     connection.query(
-      materialSql,
+      trainingSql,
       [
         name,
         isRequiredValue,
@@ -89,13 +89,13 @@ const createMaterial = (req, res) => {
           return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
         }
 
-        const materialId = result.insertId
+        const trainingId = result.insertId
 
         // MATERIAL_JOB_CATEGORY_VIEWABLE にデータを追加
         const viewableSql = `
-        INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (material_id, job_category_id) VALUES ?
+        INSERT INTO MATERIAL_JOB_CATEGORY_VIEWABLE (training_id, job_category_id) VALUES ?
       `
-        const viewableValues = viewableJobCategoryIds.map((jobCategoryId) => [materialId, jobCategoryId])
+        const viewableValues = viewableJobCategoryIds.map((jobCategoryId) => [trainingId, jobCategoryId])
 
         connection.query(viewableSql, [viewableValues], (err, viewableResult) => {
           if (err) {
@@ -103,11 +103,11 @@ const createMaterial = (req, res) => {
             return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
           }
 
-          sendResponse(res, 200, { materialId })
+          sendResponse(res, 200, { trainingId })
         })
       }
     )
   })
 }
 
-module.exports = createMaterial
+module.exports = createTraining

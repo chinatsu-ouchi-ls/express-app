@@ -2,7 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUserMaterials = (req, res) => {
+const getUserTrainings = (req, res) => {
   const userId = req.params.userId
 
   // パラメーターの検証
@@ -33,10 +33,10 @@ const getUserMaterials = (req, res) => {
       uec.updated_at AS enqueteUpdateAt
     FROM USER u
     JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
-    JOIN MATERIAL m ON m.id = mjcv.material_id
+    JOIN MATERIAL m ON m.id = mjcv.training_id
     LEFT JOIN CATEGORY c ON c.id = m.category_id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.material_id = m.id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.material_id = m.id
+    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.training_id = m.id
+    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.training_id = m.id
     WHERE u.id = ?
   `
 
@@ -49,7 +49,7 @@ const getUserMaterials = (req, res) => {
       return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
     }
 
-    const materials = results.map((row) => ({
+    const trainings = results.map((row) => ({
       id: row.id,
       name: row.name,
       isRequired: row.isRequired,
@@ -71,8 +71,8 @@ const getUserMaterials = (req, res) => {
       testUpdateAt: row.testUpdateAt,
       enqueteUpdateAt: row.enqueteUpdateAt,
     }))
-    sendResponse(res, 200, { materials })
+    sendResponse(res, 200, { trainings })
   })
 }
 
-module.exports = getUserMaterials
+module.exports = getUserTrainings

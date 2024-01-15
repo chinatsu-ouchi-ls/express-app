@@ -2,8 +2,8 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getMaterialDetail = (req, res) => {
-  const materialId = req.params.materialId
+const getTrainingDetail = (req, res) => {
+  const trainingId = req.params.trainingId
 
   const sql = `
     SELECT
@@ -36,16 +36,16 @@ const getMaterialDetail = (req, res) => {
       DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH) AS timeLimitAt
     FROM MATERIAL m
     JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.material_id
+    LEFT JOIN MATERIAL_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
     LEFT JOIN USER u ON jc.id = u.job_category_id AND u.is_admin = 0 AND u.deleted_at IS NULL
     LEFT JOIN DEPT d ON u.dept_id = d.id
-    LEFT JOIN USER_TEST_COMPLETION utc ON u.id = utc.user_id AND m.id = utc.material_id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON u.id = uec.user_id AND m.id = uec.material_id
+    LEFT JOIN USER_TEST_COMPLETION utc ON u.id = utc.user_id AND m.id = utc.training_id
+    LEFT JOIN USER_ENQUETE_COMPLETION uec ON u.id = uec.user_id AND m.id = uec.training_id
     WHERE m.id = ? AND m.deleted_at IS NULL
   `
 
-  connection.query(sql, [materialId], (err, results) => {
+  connection.query(sql, [trainingId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
       return sendResponse(res, 500, { message: MASSAGE.MATERIAL.MASSAGE_001 })
@@ -56,7 +56,7 @@ const getMaterialDetail = (req, res) => {
     }
 
     // 研修の基本情報を取得
-    const materialBaseInfo = results[0]
+    const trainingBaseInfo = results[0]
 
     // 資格がある職種の一覧を生成
     const viewableJobCategories = results.reduce((acc, row) => {
@@ -100,30 +100,30 @@ const getMaterialDetail = (req, res) => {
 
     // 返却する研修詳細情報
     // 返却する研修詳細情報
-    const material = {
-      id: materialBaseInfo.id,
-      name: materialBaseInfo.name,
-      isRequired: materialBaseInfo.isRequired,
+    const training = {
+      id: trainingBaseInfo.id,
+      name: trainingBaseInfo.name,
+      isRequired: trainingBaseInfo.isRequired,
       category: {
-        id: materialBaseInfo.categoryId,
-        name: materialBaseInfo.categoryName,
+        id: trainingBaseInfo.categoryId,
+        name: trainingBaseInfo.categoryName,
       },
-      indicationPeriod: materialBaseInfo.indicationPeriod,
-      indicationTime: materialBaseInfo.indicationTime,
-      media: materialBaseInfo.media,
-      url: materialBaseInfo.url,
-      testUrl: materialBaseInfo.testUrl,
-      enqueteUrl: materialBaseInfo.enqueteUrl,
-      testResultUrl: materialBaseInfo.testResultUrl,
-      enqueteResultUrl: materialBaseInfo.enqueteResultUrl,
-      passingScore: materialBaseInfo.passingScore,
-      bestScore: materialBaseInfo.bestScore,
+      indicationPeriod: trainingBaseInfo.indicationPeriod,
+      indicationTime: trainingBaseInfo.indicationTime,
+      media: trainingBaseInfo.media,
+      url: trainingBaseInfo.url,
+      testUrl: trainingBaseInfo.testUrl,
+      enqueteUrl: trainingBaseInfo.enqueteUrl,
+      testResultUrl: trainingBaseInfo.testResultUrl,
+      enqueteResultUrl: trainingBaseInfo.enqueteResultUrl,
+      passingScore: trainingBaseInfo.passingScore,
+      bestScore: trainingBaseInfo.bestScore,
       viewableJobCategories: viewableJobCategories,
       eligibleUsers: eligibleUsers,
     }
 
-    sendResponse(res, 200, { material })
+    sendResponse(res, 200, { training })
   })
 }
 
-module.exports = getMaterialDetail
+module.exports = getTrainingDetail

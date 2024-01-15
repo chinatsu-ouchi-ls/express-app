@@ -2,12 +2,12 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUserMaterial = (req, res) => {
+const getUserTraining = (req, res) => {
   const userId = req.params.userId
-  const materialId = req.params.materialId
+  const trainingId = req.params.trainingId
 
   // パラメーターの検証
-  if (isNaN(userId) || userId < 1 || isNaN(materialId) || materialId < 1) {
+  if (isNaN(userId) || userId < 1 || isNaN(trainingId) || trainingId < 1) {
     return sendResponse(res, 400, { message: MASSAGE.USER.MASSAGE_004 })
   }
 
@@ -34,12 +34,12 @@ const getUserMaterial = (req, res) => {
       uec.updated_at AS enqueteUpdateAt
     FROM MATERIAL m
     LEFT JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.material_id = m.id AND utc.user_id = ?
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.material_id = m.id AND uec.user_id = ?
+    LEFT JOIN USER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.user_id = ?
+    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.user_id = ?
     WHERE m.id = ?
   `
 
-  connection.query(sql, [userId, userId, materialId], (err, result) => {
+  connection.query(sql, [userId, userId, trainingId], (err, result) => {
     if (err) {
       console.error('Database error: ', err)
       return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
@@ -48,7 +48,7 @@ const getUserMaterial = (req, res) => {
       return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
     }
 
-    const material = {
+    const training = {
       id: result[0].id,
       name: result[0].name,
       isRequired: result[0].isRequired,
@@ -70,8 +70,8 @@ const getUserMaterial = (req, res) => {
       testUpdateAt: result[0].testUpdateAt,
       enqueteUpdateAt: result[0].enqueteUpdateAt,
     }
-    sendResponse(res, 200, { material })
+    sendResponse(res, 200, { training })
   })
 }
 
-module.exports = getUserMaterial
+module.exports = getUserTraining

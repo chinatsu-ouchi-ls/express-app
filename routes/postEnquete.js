@@ -5,17 +5,17 @@ const MASSAGE = require('../common/message')
 const router = express.Router()
 
 router.post('/', (req, res) => {
-  const { userId, materialId } = req.body
+  const { userId, trainingId } = req.body
 
   // バリデーションチェック
-  if (!userId || !materialId) {
+  if (!userId || !trainingId) {
     return sendResponse(res, 400, { message: MASSAGE.ENQUETE.MASSAGE_001 })
   }
 
   // 既にアンケート結果が存在するか確認するSQLクエリ
-  const checkExistSql = 'SELECT id FROM USER_ENQUETE_COMPLETION WHERE user_id = ? AND material_id = ?'
+  const checkExistSql = 'SELECT id FROM USER_ENQUETE_COMPLETION WHERE user_id = ? AND training_id = ?'
 
-  connection.query(checkExistSql, [userId, materialId], (err, existResults) => {
+  connection.query(checkExistSql, [userId, trainingId], (err, existResults) => {
     if (err) {
       console.error('Database error: ', err)
       return sendResponse(res, 500, { message: MASSAGE.ENQUETE.MASSAGE_002 })
@@ -27,10 +27,10 @@ router.post('/', (req, res) => {
     } else {
       // 新しいアンケート結果を挿入
       const insertSql = `
-        INSERT INTO USER_ENQUETE_COMPLETION (user_id, material_id)
+        INSERT INTO USER_ENQUETE_COMPLETION (user_id, training_id)
         VALUES (?, ?)`
 
-      connection.query(insertSql, [userId, materialId], (err, insertResult) => {
+      connection.query(insertSql, [userId, trainingId], (err, insertResult) => {
         if (err) {
           console.error('Database error: ', err)
           return sendResponse(res, 500, { message: MASSAGE.ENQUETE.MASSAGE_002 })

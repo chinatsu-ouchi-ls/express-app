@@ -3,8 +3,8 @@ const router = express.Router()
 
 const getUsers = require('./getUsers')
 const getUser = require('./getUser')
-const getUserMaterials = require('./getUserMaterials')
-const getUserMaterial = require('./getUserMaterial')
+const getUserTrainings = require('./getUserTrainings')
+const getUserTraining = require('./getUserTraining')
 const deleteUser = require('./deleteUser')
 const createUser = require('./createUser')
 const editUser = require('./editUser')
@@ -16,10 +16,10 @@ router.get('/', getUsers)
 router.get('/:userId', getUser)
 
 // ユーザーに割り当てられた研修の一覧を取得
-router.get('/:userId/materials', getUserMaterials)
+router.get('/:userId/trainings', getUserTrainings)
 
 // ユーザーIDと研修IDに基づいて、特定の研修の詳細情報を取得
-router.get('/:userId/materials/:materialId', getUserMaterial)
+router.get('/:userId/trainings/:trainingId', getUserTraining)
 
 // ユーザー削除
 router.delete('/:userId', deleteUser)
@@ -29,6 +29,5 @@ router.post('/', createUser)
 
 // ユーザー編集
 router.put('/:userId', editUser)
-
 
 module.exports = router

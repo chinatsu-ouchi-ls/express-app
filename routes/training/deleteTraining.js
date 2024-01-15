@@ -2,9 +2,9 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const deleteMaterial = (req, res) => {
+const deleteTraining = (req, res) => {
   // リクエストから研修IDを取得
-  const materialId = req.params.materialId
+  const trainingId = req.params.trainingId
 
   // 研修データのdeleted_atを現在の日時に設定するSQLクエリ
   const deleteSql = `
@@ -14,7 +14,7 @@ const deleteMaterial = (req, res) => {
   `
 
   // SQLクエリを実行して研修データを論理削除
-  connection.query(deleteSql, [materialId], (err, result) => {
+  connection.query(deleteSql, [trainingId], (err, result) => {
     // データベースエラーの処理
     if (err) {
       console.error('Database error: ', err)
@@ -26,4 +26,4 @@ const deleteMaterial = (req, res) => {
   })
 }
 
-module.exports = deleteMaterial
+module.exports = deleteTraining
