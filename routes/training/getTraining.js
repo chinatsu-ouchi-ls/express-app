@@ -2,7 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getTrainingDetail = (req, res) => {
+const getTraining = (req, res) => {
   const trainingId = req.params.trainingId
 
   const sql = `
@@ -33,7 +33,10 @@ const getTrainingDetail = (req, res) => {
       utc.is_completion AS testStatus,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt,
-      DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH) AS timeLimitAt
+    CASE
+      WHEN m.indication_period IS NOT NULL THEN DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH)
+      ELSE NULL
+    END AS timeLimitAt
     FROM TRAINING m
     JOIN CATEGORY c ON m.category_id = c.id
     LEFT JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
@@ -125,4 +128,4 @@ const getTrainingDetail = (req, res) => {
   })
 }
 
-module.exports = getTrainingDetail
+module.exports = getTraining

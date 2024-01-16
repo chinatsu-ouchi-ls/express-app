@@ -20,14 +20,15 @@ const getTrainings = (req, res) => {
       m.enquete_result_url AS enqueteResultUrl,
       m.passing_score AS passingScore,
       m.best_score AS bestScore,
-      GROUP_CONCAT(DISTINCT jc.id SEPARATOR ', ') AS jobCategoryIds,
-      GROUP_CONCAT(DISTINCT jc.name SEPARATOR ', ') AS jobCategoryNames
+      GROUP_CONCAT(DISTINCT jc.id ORDER BY jc.id SEPARATOR ', ') AS jobCategoryIds,
+      GROUP_CONCAT(DISTINCT jc.name ORDER BY jc.id SEPARATOR ', ') AS jobCategoryNames
     FROM TRAINING m
     JOIN CATEGORY c ON m.category_id = c.id
     LEFT JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
     WHERE m.deleted_at IS NULL
     GROUP BY m.id
+    ORDER BY m.id
   `
 
   connection.query(sql, (err, results) => {
