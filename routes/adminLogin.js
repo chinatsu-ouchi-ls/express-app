@@ -12,8 +12,8 @@ router.post('/', (req, res) => {
     return sendResponse(res, 400, { message: MASSAGE.LOGIN.MASSAGE_006 })
   }
 
-  // 管理者ユーザーを取得するSQLクエリ
-  const sql = 'SELECT id, password, is_admin FROM USER WHERE mail_address = ?'
+  // 管理者メンバーを取得するSQLクエリ
+  const sql = 'SELECT id, password, is_admin FROM MEMBER WHERE mail_address = ?'
 
   connection.query(sql, [accountId], (err, results) => {
     if (err) {
@@ -31,10 +31,10 @@ router.post('/', (req, res) => {
       return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_007 })
     }
 
-    const adminUser = results[0]
+    const adminMember = results[0]
 
     // パスワードの検証（平文の比較）
-    if (password !== adminUser.password) {
+    if (password !== adminMember.password) {
       return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_003 })
     }
 

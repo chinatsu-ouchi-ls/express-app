@@ -2,7 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUsers = (req, res) => {
+const getMembers = (req, res) => {
   const sql = `
     SELECT
       u.id,
@@ -15,7 +15,7 @@ const getUsers = (req, res) => {
       j.id as job_category_id,
       j.name as job_category_name
     FROM
-      USER u
+      MEMBER u
       LEFT JOIN DEPT d ON u.dept_id = d.id
       LEFT JOIN JOB_CATEGORY j ON u.job_category_id = j.id
     WHERE
@@ -25,28 +25,28 @@ const getUsers = (req, res) => {
   connection.query(sql, (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+      return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
 
     // レスポンスをフォーマット
-    const users = results.map((user) => ({
-      id: user.id,
-      name: user.name,
-      password: user.password,
-      mailAddress: user.mail_address,
+    const members = results.map((member) => ({
+      id: member.id,
+      name: member.name,
+      password: member.password,
+      mailAddress: member.mail_address,
       dept: {
-        id: user.dept_id,
-        name: user.dept_name,
+        id: member.dept_id,
+        name: member.dept_name,
       },
       jobCategory: {
-        id: user.job_category_id,
-        name: user.job_category_name,
+        id: member.job_category_id,
+        name: member.job_category_name,
       },
-      enteringCompanyAt: user.entering_company_at,
+      enteringCompanyAt: member.entering_company_at,
     }))
 
-    sendResponse(res, 200, { users })
+    sendResponse(res, 200, { members })
   })
 }
 
-module.exports = getUsers
+module.exports = getMembers

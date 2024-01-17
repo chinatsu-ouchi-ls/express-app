@@ -2,13 +2,13 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUserTraining = (req, res) => {
-  const userId = req.params.userId
+const getMemberTraining = (req, res) => {
+  const memberId = req.params.memberId
   const trainingId = req.params.trainingId
 
   // パラメーターの検証
-  if (isNaN(userId) || userId < 1 || isNaN(trainingId) || trainingId < 1) {
-    return sendResponse(res, 400, { message: MASSAGE.USER.MASSAGE_004 })
+  if (isNaN(memberId) || memberId < 1 || isNaN(trainingId) || trainingId < 1) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_004 })
   }
 
   // 研修詳細情報を取得するSQLクエリ
@@ -34,19 +34,19 @@ const getUserTraining = (req, res) => {
       DATE_FORMAT(DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH), '%Y/%m/%d %H:%i:%s') AS timeLimitAt
     FROM TRAINING m
     LEFT JOIN CATEGORY c ON m.category_id = c.id
-    LEFT JOIN USER u ON u.id = ?
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.user_id = u.id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.user_id = u.id
+    LEFT JOIN MEMBER u ON u.id = ?
+    LEFT JOIN MEMBER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.member_id = u.id
+    LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.member_id = u.id
     WHERE m.id = ?
   `
   // SQLクエリを実行して研修詳細情報を取得
-  connection.query(sql, [userId, trainingId], (err, result) => {
+  connection.query(sql, [memberId, trainingId], (err, result) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+      return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
     if (result.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
+      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_004 })
     }
 
     // 結果を整形してレスポンスに設定
@@ -76,4 +76,4 @@ const getUserTraining = (req, res) => {
   })
 }
 
-module.exports = getUserTraining
+module.exports = getMemberTraining

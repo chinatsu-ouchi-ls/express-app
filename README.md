@@ -17,7 +17,7 @@
 
 ```dotenv
 RDS_HOST=<本番DBホスト>
-RDS_USER=<DBユーザー>
+RDS_MEMBER=<DBユーザー>
 RDS_PASSWORD=<DBパスワード>
 RDS_DATABASE=<DB名>
 RDS_PORT=<DBポート>
@@ -27,7 +27,7 @@ RDS_PORT=<DBポート>
 
 ```dotenv
 RDS_HOST=<開発DBホスト>
-RDS_USER=<DBユーザー>
+RDS_MEMBER=<DBユーザー>
 RDS_PASSWORD=<DBパスワード>
 RDS_DATABASE=<DB名>
 RDS_PORT=<DBポート>
@@ -49,7 +49,7 @@ RDS_PORT=<DBポート>
 
 - 本番環境では SSH キーを使用して RDS に接続する必要があります。以下のコマンド例を参考にして、必要な情報を編集して実行します。
   ```
-  ssh -L 3307:prob-db.cn7rjsqtbrnm.ap-northeast-1.rds.amazonaws.com:3306 ec2-user@54.249.59.11 -i /path/to/your/pikatore-rds.pem
+  ssh -L 3307:prob-db.cn7rjsqtbrnm.ap-northeast-1.rds.amazonaws.com:3306 ec2-member@54.249.59.11 -i /path/to/your/pikatore-rds.pem
   ```
 
 ## ブランチルール

@@ -2,12 +2,12 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUser = (req, res) => {
-  const userId = req.params.userId
+const getMember = (req, res) => {
+  const memberId = req.params.memberId
 
   // パラメーターの検証
-  if (isNaN(userId) || userId < 1) {
-    return sendResponse(res, 400, { message: MASSAGE.USER.MASSAGE_001 })
+  if (isNaN(memberId) || memberId < 1) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
   const sql = `
@@ -19,22 +19,22 @@ const getUser = (req, res) => {
       d.name AS 'dept.name', 
       j.id AS 'jobCategory.id', 
       j.name AS 'jobCategory.name' 
-    FROM USER u 
+    FROM MEMBER u 
     LEFT JOIN DEPT d ON u.dept_id = d.id 
     LEFT JOIN JOB_CATEGORY j ON u.job_category_id = j.id 
     WHERE u.id = ?`
 
-  connection.query(sql, [userId], (err, result) => {
+  connection.query(sql, [memberId], (err, result) => {
     if (err) {
       console.error('Database error: ', err) // サーバーログ
-      return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+      return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
 
     if (result.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_003 })
+      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_003 })
     }
 
-    const user = {
+    const member = {
       id: result[0].id,
       name: result[0].name,
       dept: {
@@ -48,8 +48,8 @@ const getUser = (req, res) => {
       enteringCompanyAt: result[0].entering_company_at,
     }
 
-    sendResponse(res, 200, { user })
+    sendResponse(res, 200, { member })
   })
 }
 
-module.exports = getUser
+module.exports = getMember

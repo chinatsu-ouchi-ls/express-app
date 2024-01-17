@@ -22,8 +22,8 @@ const getTraining = (req, res) => {
       m.enquete_result_url AS enqueteResultUrl,
       m.passing_score AS passingScore,
       m.best_score AS bestScore,
-      u.id AS userId,
-      u.name AS userName,
+      u.id AS memberId,
+      u.name AS memberName,
       d.id AS deptId,
       d.name AS deptName,
       jc.id AS jobCategoryId,
@@ -41,10 +41,10 @@ const getTraining = (req, res) => {
     JOIN CATEGORY c ON m.category_id = c.id
     LEFT JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON m.id = mjcv.training_id
     LEFT JOIN JOB_CATEGORY jc ON mjcv.job_category_id = jc.id
-    LEFT JOIN USER u ON jc.id = u.job_category_id AND u.is_admin = 0 AND u.deleted_at IS NULL
+    LEFT JOIN MEMBER u ON jc.id = u.job_category_id AND u.is_admin = 0 AND u.deleted_at IS NULL
     LEFT JOIN DEPT d ON u.dept_id = d.id
-    LEFT JOIN USER_TEST_COMPLETION utc ON u.id = utc.user_id AND m.id = utc.training_id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON u.id = uec.user_id AND m.id = uec.training_id
+    LEFT JOIN MEMBER_TEST_COMPLETION utc ON u.id = utc.member_id AND m.id = utc.training_id
+    LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON u.id = uec.member_id AND m.id = uec.training_id
     WHERE m.id = ? AND m.deleted_at IS NULL
   `
 
@@ -72,12 +72,12 @@ const getTraining = (req, res) => {
       return acc
     }, [])
 
-    // 資格があるユーザー一覧を生成
-    const eligibleUsers = results.reduce((acc, row) => {
-      if (row.userId && !acc.some((user) => user.id === row.userId)) {
+    // 資格があるメンバー一覧を生成
+    const eligibleMembers = results.reduce((acc, row) => {
+      if (row.memberId && !acc.some((member) => member.id === row.memberId)) {
         acc.push({
-          id: row.userId,
-          name: row.userName,
+          id: row.memberId,
+          name: row.memberName,
           dept: {
             id: row.deptId,
             name: row.deptName,
@@ -98,8 +98,8 @@ const getTraining = (req, res) => {
       return acc
     }, [])
 
-    // ユーザーIDに基づいてソート
-    eligibleUsers.sort((a, b) => a.id - b.id)
+    // メンバーIDに基づいてソート
+    eligibleMembers.sort((a, b) => a.id - b.id)
 
     // 返却する研修詳細情報
     const training = {
@@ -121,7 +121,7 @@ const getTraining = (req, res) => {
       passingScore: trainingBaseInfo.passingScore,
       bestScore: trainingBaseInfo.bestScore,
       viewableJobCategories: viewableJobCategories,
-      eligibleUsers: eligibleUsers,
+      eligibleMembers: eligibleMembers,
     }
 
     sendResponse(res, 200, { training })

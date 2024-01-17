@@ -2,15 +2,15 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
-const getUserTrainings = (req, res) => {
-  const userId = req.params.userId
+const getMemberTrainings = (req, res) => {
+  const memberId = req.params.memberId
 
   // パラメーターの検証
-  if (isNaN(userId) || userId < 1) {
-    return sendResponse(res, 400, { message: MASSAGE.USER.MASSAGE_001 })
+  if (isNaN(memberId) || memberId < 1) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
-  // ユーザーの職種に基づく研修の一覧を取得するSQLクエリ
+  // メンバーの職種に基づく研修の一覧を取得するSQLクエリ
   const sql = `
     SELECT
       m.id,
@@ -31,23 +31,23 @@ const getUserTrainings = (req, res) => {
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt,
       DATE_FORMAT(DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH), '%Y/%m/%d %H:%i:%s') AS timeLimitAt
-    FROM USER u
+    FROM MEMBER u
     JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
     JOIN TRAINING m ON m.id = mjcv.training_id
     LEFT JOIN CATEGORY c ON c.id = m.category_id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.training_id = m.id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.training_id = m.id
+    LEFT JOIN MEMBER_TEST_COMPLETION utc ON utc.member_id = u.id AND utc.training_id = m.id
+    LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON uec.member_id = u.id AND uec.training_id = m.id
     WHERE u.id = ?
   `
 
-  // SQLクエリを実行してユーザーの研修一覧を取得
-  connection.query(sql, [userId], (err, results) => {
+  // SQLクエリを実行してメンバーの研修一覧を取得
+  connection.query(sql, [memberId], (err, results) => {
     if (err) {
       console.error('Database error: ', err)
-      return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+      return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
     if (results.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_004 })
+      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_004 })
     }
 
     // 結果を整形してレスポンスに設定
@@ -77,4 +77,4 @@ const getUserTrainings = (req, res) => {
   })
 }
 
-module.exports = getUserTrainings
+module.exports = getMemberTrainings

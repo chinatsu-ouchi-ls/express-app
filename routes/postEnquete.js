@@ -4,10 +4,10 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const router = express.Router()
 
-const checkUserExists = (userId) => {
+const checkMemberExists = (memberId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM USER WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [userId], (err, results) => {
+    const sql = 'SELECT id FROM MEMBER WHERE id = ? AND deleted_at IS NULL'
+    connection.query(sql, [memberId], (err, results) => {
       if (err) return reject(new Error(MASSAGE.ENQUETE.MASSAGE_002))
       resolve(results.length > 0)
     })
@@ -24,20 +24,20 @@ const checkTrainingExists = (trainingId) => {
   })
 }
 
-const checkEnqueteExists = (userId, trainingId) => {
+const checkEnqueteExists = (memberId, trainingId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM USER_ENQUETE_COMPLETION WHERE user_id = ? AND training_id = ?'
-    connection.query(sql, [userId, trainingId], (err, results) => {
+    const sql = 'SELECT id FROM MEMBER_ENQUETE_COMPLETION WHERE member_id = ? AND training_id = ?'
+    connection.query(sql, [memberId, trainingId], (err, results) => {
       if (err) return reject(new Error(MASSAGE.ENQUETE.MASSAGE_002))
       resolve(results.length > 0)
     })
   })
 }
 
-const insertEnquete = (userId, trainingId) => {
+const insertEnquete = (memberId, trainingId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'INSERT INTO USER_ENQUETE_COMPLETION (user_id, training_id) VALUES (?, ?)'
-    connection.query(sql, [userId, trainingId], (err, result) => {
+    const sql = 'INSERT INTO MEMBER_ENQUETE_COMPLETION (member_id, training_id) VALUES (?, ?)'
+    connection.query(sql, [memberId, trainingId], (err, result) => {
       if (err) return reject(new Error(MASSAGE.ENQUETE.MASSAGE_002))
       resolve(result)
     })
@@ -45,17 +45,17 @@ const insertEnquete = (userId, trainingId) => {
 }
 
 router.post('/', (req, res) => {
-  const { userId, trainingId } = req.body
+  const { memberId, trainingId } = req.body
 
   // バリデーションチェック
-  if (!userId || !trainingId) {
+  if (!memberId || !trainingId) {
     return sendResponse(res, 400, { message: MASSAGE.ENQUETE.MASSAGE_001 })
   }
 
-  checkUserExists(userId)
-    .then((userExists) => {
-      if (!userExists) {
-        throw new Error(MASSAGE.ENQUETE.MASSAGE_005) // ユーザーが存在しない、または削除されている場合のエラーメッセージ
+  checkMemberExists(memberId)
+    .then((memberExists) => {
+      if (!memberExists) {
+        throw new Error(MASSAGE.ENQUETE.MASSAGE_005) // メンバーが存在しない、または削除されている場合のエラーメッセージ
       }
       return checkTrainingExists(trainingId)
     })
@@ -63,13 +63,13 @@ router.post('/', (req, res) => {
       if (!trainingExists) {
         throw new Error(MASSAGE.ENQUETE.MASSAGE_006) // トレーニングが存在しない、または削除されている場合のエラーメッセージ
       }
-      return checkEnqueteExists(userId, trainingId)
+      return checkEnqueteExists(memberId, trainingId)
     })
     .then((enqueteExists) => {
       if (enqueteExists) {
         throw new Error(MASSAGE.ENQUETE.MASSAGE_003) // アンケート結果が既に存在する場合のメッセージ
       }
-      return insertEnquete(userId, trainingId)
+      return insertEnquete(memberId, trainingId)
     })
     .then(() => {
       sendResponse(res, 200, { message: MASSAGE.ENQUETE.MASSAGE_004 }) // 新しいアンケート結果が挿入された場合のメッセージ

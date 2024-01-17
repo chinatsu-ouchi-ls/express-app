@@ -14,9 +14,9 @@ app.use(limiter)
 app.use(cors()) // CORSを全てのルートに適用する
 app.use(express.json()) // JSONミドルウェアを追加する
 
-const users = require('./routes/user/users')
+const members = require('./routes/member/members')
 const trainings = require('./routes/training/trainings')
-const getAdminUser = require('./routes/getAdminUser')
+const getAdminMember = require('./routes/getAdminMember')
 const login = require('./routes/login')
 const adminLogin = require('./routes/adminLogin')
 const postTest = require('./routes/postTest')
@@ -28,9 +28,9 @@ app.get('/', (request, response) => {
   response.send('Hello from Express!')
 })
 
-app.use('/users', users)
+app.use('/members', members)
 app.use('/trainings', trainings)
-app.use('/admin/users', getAdminUser)
+app.use('/admin/members', getAdminMember)
 app.use('/login', login)
 app.use('/admin/login', adminLogin)
 app.use('/test/result', postTest)

@@ -4,17 +4,17 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const router = express.Router()
 
-// 特定のユーザーの詳細情報と研修の一覧を取得
-router.get('/:userId', (req, res) => {
-  const userId = req.params.userId
+// 特定のメンバーの詳細情報と研修の一覧を取得
+router.get('/:memberId', (req, res) => {
+  const memberId = req.params.memberId
 
   // パラメーターの検証
-  if (isNaN(userId) || userId < 1) {
-    return sendResponse(res, 400, { message: MASSAGE.USER.MASSAGE_001 })
+  if (isNaN(memberId) || memberId < 1) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
-  // ユーザー詳細情報の取得
-  const userSql = `
+  // メンバー詳細情報の取得
+  const memberSql = `
     SELECT 
       u.id, 
       u.name,
@@ -25,13 +25,13 @@ router.get('/:userId', (req, res) => {
       d.name AS 'dept_name', 
       j.id AS 'job_category_id', 
       j.name AS 'job_category_name' 
-    FROM USER u 
+    FROM MEMBER u 
     LEFT JOIN DEPT d ON u.dept_id = d.id 
     LEFT JOIN JOB_CATEGORY j ON u.job_category_id = j.id 
     WHERE u.id = ?
   `
 
-  // ユーザーの研修一覧の取得
+  // メンバーの研修一覧の取得
   const trainingsSql = `
     SELECT
       m.id,
@@ -52,52 +52,51 @@ router.get('/:userId', (req, res) => {
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt
-    FROM USER u
+    FROM MEMBER u
     JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
     JOIN TRAINING m ON m.id = mjcv.training_id
     LEFT JOIN CATEGORY c ON c.id = m.category_id
-    LEFT JOIN USER_TEST_COMPLETION utc ON utc.user_id = u.id AND utc.training_id = m.id
-    LEFT JOIN USER_ENQUETE_COMPLETION uec ON uec.user_id = u.id AND uec.training_id = m.id
+    LEFT JOIN MEMBER_TEST_COMPLETION utc ON utc.member_id = u.id AND utc.training_id = m.id
+    LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON uec.member_id = u.id AND uec.training_id = m.id
     WHERE u.id = ?
   `
 
-  connection.query(userSql, [userId], (err, userResult) => {
+  connection.query(memberSql, [memberId], (err, memberResult) => {
     // エラーハンドリング
     if (err) {
-      return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+      return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
-    if (userResult.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.USER.MASSAGE_003 })
+    if (memberResult.length === 0) {
+      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_003 })
     }
 
-    // ユーザーの研修一覧を取得
-    connection.query(trainingsSql, [userId], (trainingsErr, trainingsResult) => {
+    // メンバーの研修一覧を取得
+    connection.query(trainingsSql, [memberId], (trainingsErr, trainingsResult) => {
       // エラーハンドリング
       if (trainingsErr) {
-        return sendResponse(res, 500, { message: MASSAGE.USER.MASSAGE_002 })
+        return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
       }
 
       // レスポンスの組み立て
       const response = {
         status: 200,
-        user: {
-          id: userResult[0].id,
-          name: userResult[0].name,
-          password: userResult[0].password,
-          mailAddress: userResult[0].mail_address,
+        member: {
+          id: memberResult[0].id,
+          name: memberResult[0].name,
+          password: memberResult[0].password,
+          mailAddress: memberResult[0].mail_address,
           dept: {
-            id: userResult[0].dept_id,
-            name: userResult[0].dept_name,
+            id: memberResult[0].dept_id,
+            name: memberResult[0].dept_name,
           },
           jobCategory: {
-            id: userResult[0].job_category_id,
-            name: userResult[0].job_category_name,
+            id: memberResult[0].job_category_id,
+            name: memberResult[0].job_category_name,
           },
-          enteringCompanyAt: userResult[0].entering_company_at,
+          enteringCompanyAt: memberResult[0].entering_company_at,
           trainings: trainingsResult,
         },
       }
-      console.log(userResult[0])
       sendResponse(res, 200, response)
     })
   })

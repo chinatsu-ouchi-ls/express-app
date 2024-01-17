@@ -4,10 +4,10 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const router = express.Router()
 
-const checkUserExists = (userId) => {
+const checkMemberExists = (memberId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM USER WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [userId], (err, results) => {
+    const sql = 'SELECT id FROM MEMBER WHERE id = ? AND deleted_at IS NULL'
+    connection.query(sql, [memberId], (err, results) => {
       if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
       resolve(results.length > 0)
     })
@@ -34,35 +34,35 @@ const checkPassingScore = (trainingId) => {
   })
 }
 
-const checkTestExistence = (userId, trainingId) => {
+const checkTestExistence = (memberId, trainingId) => {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM USER_TEST_COMPLETION WHERE user_id = ? AND training_id = ?'
-    connection.query(sql, [userId, trainingId], (err, results) => {
+    const sql = 'SELECT id FROM MEMBER_TEST_COMPLETION WHERE member_id = ? AND training_id = ?'
+    connection.query(sql, [memberId, trainingId], (err, results) => {
       if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
       resolve(results.length > 0)
     })
   })
 }
 
-const updateTestCompletion = (userId, trainingId, score, isCompletion) => {
+const updateTestCompletion = (memberId, trainingId, score, isCompletion) => {
   return new Promise((resolve, reject) => {
     const sql = `
-      UPDATE USER_TEST_COMPLETION 
+      UPDATE MEMBER_TEST_COMPLETION 
       SET test_score = ?, is_completion = ? 
-      WHERE user_id = ? AND training_id = ?`
-    connection.query(sql, [score, isCompletion, userId, trainingId], (err, result) => {
+      WHERE member_id = ? AND training_id = ?`
+    connection.query(sql, [score, isCompletion, memberId, trainingId], (err, result) => {
       if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
       resolve(result)
     })
   })
 }
 
-const insertTestCompletion = (userId, trainingId, score, isCompletion) => {
+const insertTestCompletion = (memberId, trainingId, score, isCompletion) => {
   return new Promise((resolve, reject) => {
     const sql = `
-      INSERT INTO USER_TEST_COMPLETION (user_id, training_id, test_score, is_completion)
+      INSERT INTO MEMBER_TEST_COMPLETION (member_id, training_id, test_score, is_completion)
       VALUES (?, ?, ?, ?)`
-    connection.query(sql, [userId, trainingId, score, isCompletion], (err, result) => {
+    connection.query(sql, [memberId, trainingId, score, isCompletion], (err, result) => {
       if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
       resolve(result)
     })
@@ -70,17 +70,17 @@ const insertTestCompletion = (userId, trainingId, score, isCompletion) => {
 }
 
 router.post('/', (req, res) => {
-  const { userId, trainingId, score } = req.body
+  const { memberId, trainingId, score } = req.body
 
   // バリデーションチェック
-  if (!userId || !trainingId || score === undefined) {
+  if (!memberId || !trainingId || score === undefined) {
     return sendResponse(res, 400, { message: MASSAGE.TEST.MASSAGE_001 })
   }
 
-  checkUserExists(userId)
-    .then((userExists) => {
-      if (!userExists) {
-        throw new Error(MASSAGE.TEST.MASSAGE_004) // ユーザーが存在しない、または削除されている場合のエラーメッセージ
+  checkMemberExists(memberId)
+    .then((memberExists) => {
+      if (!memberExists) {
+        throw new Error(MASSAGE.TEST.MASSAGE_004) // メンバーが存在しない、または削除されている場合のエラーメッセージ
       }
       return checkTrainingExists(trainingId)
     })
@@ -92,13 +92,13 @@ router.post('/', (req, res) => {
     })
     .then((passingScore) => {
       const isCompletion = score >= passingScore ? 1 : 0
-      return checkTestExistence(userId, trainingId).then((exists) => ({ exists, isCompletion }))
+      return checkTestExistence(memberId, trainingId).then((exists) => ({ exists, isCompletion }))
     })
     .then(({ exists, isCompletion }) => {
       if (exists) {
-        return updateTestCompletion(userId, trainingId, score, isCompletion)
+        return updateTestCompletion(memberId, trainingId, score, isCompletion)
       } else {
-        return insertTestCompletion(userId, trainingId, score, isCompletion)
+        return insertTestCompletion(memberId, trainingId, score, isCompletion)
       }
     })
     .then(() => {
