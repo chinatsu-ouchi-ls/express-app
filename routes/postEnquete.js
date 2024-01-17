@@ -4,26 +4,6 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const router = express.Router()
 
-const checkMemberExists = (memberId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM MEMBER WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [memberId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.ENQUETE.MASSAGE_002))
-      resolve(results.length > 0)
-    })
-  })
-}
-
-const checkTrainingExists = (trainingId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM TRAINING WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [trainingId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.ENQUETE.MASSAGE_002))
-      resolve(results.length > 0)
-    })
-  })
-}
-
 const checkEnqueteExists = (memberId, trainingId) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT id FROM MEMBER_ENQUETE_COMPLETION WHERE member_id = ? AND training_id = ?'
@@ -52,19 +32,7 @@ router.post('/', (req, res) => {
     return sendResponse(res, 400, { message: MASSAGE.ENQUETE.MASSAGE_001 })
   }
 
-  checkMemberExists(memberId)
-    .then((memberExists) => {
-      if (!memberExists) {
-        throw new Error(MASSAGE.ENQUETE.MASSAGE_005) // メンバーが存在しない、または削除されている場合のエラーメッセージ
-      }
-      return checkTrainingExists(trainingId)
-    })
-    .then((trainingExists) => {
-      if (!trainingExists) {
-        throw new Error(MASSAGE.ENQUETE.MASSAGE_006) // トレーニングが存在しない、または削除されている場合のエラーメッセージ
-      }
-      return checkEnqueteExists(memberId, trainingId)
-    })
+  checkEnqueteExists(memberId, trainingId)
     .then((enqueteExists) => {
       if (enqueteExists) {
         throw new Error(MASSAGE.ENQUETE.MASSAGE_003) // アンケート結果が既に存在する場合のメッセージ

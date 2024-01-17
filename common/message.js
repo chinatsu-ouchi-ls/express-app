@@ -25,6 +25,7 @@ const MASSAGE = {
     MASSAGE_007: '管理者以外はログインできません。',
     MASSAGE_008: 'アカウントIDが違います。',
     MASSAGE_009: 'ログインに成功しました。',
+    MASSAGE_010: '退職済みです。',
   },
   TEST: {
     MASSAGE_001: 'リクエストデータが無効です。',

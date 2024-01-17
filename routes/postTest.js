@@ -4,26 +4,6 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const router = express.Router()
 
-const checkMemberExists = (memberId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM MEMBER WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [memberId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
-      resolve(results.length > 0)
-    })
-  })
-}
-
-const checkTrainingExists = (trainingId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM TRAINING WHERE id = ? AND deleted_at IS NULL'
-    connection.query(sql, [trainingId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.TEST.MASSAGE_003))
-      resolve(results.length > 0)
-    })
-  })
-}
-
 const checkPassingScore = (trainingId) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT passing_score FROM TRAINING WHERE id = ?'
@@ -77,19 +57,7 @@ router.post('/', (req, res) => {
     return sendResponse(res, 400, { message: MASSAGE.TEST.MASSAGE_001 })
   }
 
-  checkMemberExists(memberId)
-    .then((memberExists) => {
-      if (!memberExists) {
-        throw new Error(MASSAGE.TEST.MASSAGE_004) // メンバーが存在しない、または削除されている場合のエラーメッセージ
-      }
-      return checkTrainingExists(trainingId)
-    })
-    .then((trainingExists) => {
-      if (!trainingExists) {
-        throw new Error(MASSAGE.TEST.MASSAGE_005) // トレーニングが存在しない、または削除されている場合のエラーメッセージ
-      }
-      return checkPassingScore(trainingId)
-    })
+  checkPassingScore(trainingId)
     .then((passingScore) => {
       const isCompletion = score >= passingScore ? 1 : 0
       return checkTestExistence(memberId, trainingId).then((exists) => ({ exists, isCompletion }))

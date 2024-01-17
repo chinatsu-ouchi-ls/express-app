@@ -15,26 +15,6 @@ const checkMailExists = (mailAddress) => {
   })
 }
 
-const checkDeptExists = (deptId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM DEPT WHERE id = ?'
-    connection.query(sql, [deptId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.MEMBER.MASSAGE_002))
-      resolve(results.length > 0)
-    })
-  })
-}
-
-const checkJobCategoryExists = (jobCategoryId) => {
-  return new Promise((resolve, reject) => {
-    const sql = 'SELECT id FROM JOB_CATEGORY WHERE id = ?'
-    connection.query(sql, [jobCategoryId], (err, results) => {
-      if (err) return reject(new Error(MASSAGE.MEMBER.MASSAGE_002))
-      resolve(results.length > 0)
-    })
-  })
-}
-
 const checkDeptJobCategoryCombinationExists = (deptId, jobCategoryId) => {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT id FROM DEPT_JOB_CATEGORY_MASTER WHERE dept_id = ? AND job_category_id = ?'
@@ -79,18 +59,6 @@ const createMember = (req, res) => {
     .then((mailExists) => {
       if (mailExists) {
         throw new Error(MASSAGE.MEMBER.MASSAGE_014)
-      }
-      return checkDeptExists(deptId)
-    })
-    .then((deptExists) => {
-      if (!deptExists) {
-        throw new Error(MASSAGE.MEMBER.MASSAGE_011)
-      }
-      return checkJobCategoryExists(jobCategoryId)
-    })
-    .then((jobCategoryExists) => {
-      if (!jobCategoryExists) {
-        throw new Error(MASSAGE.MEMBER.MASSAGE_012)
       }
       return checkDeptJobCategoryCombinationExists(deptId, jobCategoryId)
     })
