@@ -17,12 +17,14 @@ router.get('/:userId', (req, res) => {
   const userSql = `
     SELECT 
       u.id, 
-      u.name, 
+      u.name,
+      u.password,
+      u.mail_address,
       u.entering_company_at, 
-      d.id AS 'dept.id', 
-      d.name AS 'dept.name', 
-      j.id AS 'jobCategory.id', 
-      j.name AS 'jobCategory.name' 
+      d.id AS 'dept_id', 
+      d.name AS 'dept_name', 
+      j.id AS 'job_category_id', 
+      j.name AS 'job_category_name' 
     FROM USER u 
     LEFT JOIN DEPT d ON u.dept_id = d.id 
     LEFT JOIN JOB_CATEGORY j ON u.job_category_id = j.id 
@@ -79,10 +81,23 @@ router.get('/:userId', (req, res) => {
       const response = {
         status: 200,
         user: {
-          ...userResult[0],
+          id: userResult[0].id,
+          name: userResult[0].name,
+          password: userResult[0].password,
+          mailAddress: userResult[0].mail_address,
+          dept: {
+            id: userResult[0].dept_id,
+            name: userResult[0].dept_name,
+          },
+          jobCategory: {
+            id: userResult[0].job_category_id,
+            name: userResult[0].job_category_name,
+          },
+          enteringCompanyAt: userResult[0].entering_company_at,
           trainings: trainingsResult,
         },
       }
+      console.log(userResult[0])
       sendResponse(res, 200, response)
     })
   })

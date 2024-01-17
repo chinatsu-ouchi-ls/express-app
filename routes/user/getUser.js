@@ -13,7 +13,7 @@ const getUser = (req, res) => {
   const sql = `
     SELECT 
       u.id, 
-      u.name, 
+      u.name,
       u.entering_company_at, 
       d.id AS 'dept.id', 
       d.name AS 'dept.name', 
