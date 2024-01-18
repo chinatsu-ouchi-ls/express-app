@@ -17,7 +17,7 @@
 
 ```dotenv
 RDS_HOST=<本番DBホスト>
-RDS_MEMBER=<DBユーザー>
+RDS_USER=<DBユーザー>
 RDS_PASSWORD=<DBパスワード>
 RDS_DATABASE=<DB名>
 RDS_PORT=<DBポート>
@@ -27,7 +27,7 @@ RDS_PORT=<DBポート>
 
 ```dotenv
 RDS_HOST=<開発DBホスト>
-RDS_MEMBER=<DBユーザー>
+RDS_USER=<DBユーザー>
 RDS_PASSWORD=<DBパスワード>
 RDS_DATABASE=<DB名>
 RDS_PORT=<DBポート>
