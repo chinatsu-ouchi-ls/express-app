@@ -22,6 +22,7 @@ const adminLogin = require('./routes/adminLogin')
 const postTest = require('./routes/postTest')
 const postEnquete = require('./routes/postEnquete')
 const getCategories = require('./routes/getCategories')
+const getJobCategories = require('./routes/getJobCategories')
 const getDepts = require('./routes/getDepts')
 
 app.get('/', (request, response) => {
@@ -36,6 +37,7 @@ app.use('/admin/login', adminLogin)
 app.use('/test/result', postTest)
 app.use('/enquete/result', postEnquete)
 app.use('/categories', getCategories)
+app.use('/jobCategories', getJobCategories)
 app.use('/depts', getDepts)
 
 const port = process.env.PORT || 8081
