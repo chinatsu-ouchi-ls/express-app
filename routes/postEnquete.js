@@ -47,7 +47,7 @@ router.post('/', (req, res) => {
         console.error('Error: ', err)
         sendResponse(res, 500, { message: err.message })
       } else {
-        sendResponse(res, 400, { message: err.message })
+        sendResponse(res, 401, { message: err.message })
       }
     })
 })

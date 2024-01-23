@@ -6,9 +6,13 @@ const getMemberTraining = (req, res) => {
   const memberId = req.params.memberId
   const trainingId = req.params.trainingId
 
-  // パラメーターの検証
-  if (isNaN(memberId) || memberId < 1 || isNaN(trainingId) || trainingId < 1) {
-    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_004 })
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
+  }
+  // trainingId が数値でない場合、エラーを返す
+  if (!Number.isInteger(trainingId)) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_015 })
   }
 
   // 研修詳細情報を取得するSQLクエリ
@@ -46,7 +50,7 @@ const getMemberTraining = (req, res) => {
       return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
     if (result.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_004 })
+      return sendResponse(res, 401, { message: MASSAGE.MEMBER.MASSAGE_004 })
     }
 
     // 結果を整形してレスポンスに設定

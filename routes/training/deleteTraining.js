@@ -6,6 +6,11 @@ const deleteTraining = (req, res) => {
   // リクエストから研修IDを取得
   const trainingId = req.params.trainingId
 
+  // trainingId が数値でない場合、エラーを返す
+  if (!Number.isInteger(trainingId)) {
+    return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_007 })
+  }
+
   // 研修データのdeleted_atを現在の日時に設定するSQLクエリ
   const deleteSql = `
     UPDATE TRAINING

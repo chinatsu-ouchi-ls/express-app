@@ -5,6 +5,11 @@ const MASSAGE = require('../../common/message')
 const getTraining = (req, res) => {
   const trainingId = req.params.trainingId
 
+  // trainingId が数値でない場合、エラーを返す
+  if (!Number.isInteger(trainingId)) {
+    return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_007 })
+  }
+
   const sql = `
     SELECT
       m.id,
@@ -55,7 +60,7 @@ const getTraining = (req, res) => {
     }
 
     if (results.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.TRAINING.MASSAGE_002 })
+      return sendResponse(res, 401, { message: MASSAGE.TRAINING.MASSAGE_002 })
     }
 
     // 研修の基本情報を取得

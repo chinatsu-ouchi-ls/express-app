@@ -5,8 +5,8 @@ const MASSAGE = require('../../common/message')
 const getMemberTrainings = (req, res) => {
   const memberId = req.params.memberId
 
-  // パラメーターの検証
-  if (isNaN(memberId) || memberId < 1) {
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
@@ -47,7 +47,7 @@ const getMemberTrainings = (req, res) => {
       return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
     if (results.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_004 })
+      return sendResponse(res, 401, { message: MASSAGE.MEMBER.MASSAGE_004 })
     }
 
     // 結果を整形してレスポンスに設定

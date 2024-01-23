@@ -8,8 +8,8 @@ const router = express.Router()
 router.get('/:memberId', (req, res) => {
   const memberId = req.params.memberId
 
-  // パラメーターの検証
-  if (isNaN(memberId) || memberId < 1) {
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 

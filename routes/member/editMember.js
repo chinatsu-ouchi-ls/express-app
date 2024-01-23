@@ -25,46 +25,42 @@ const checkDeptJobCategoryCombinationExists = (deptId, jobCategoryId) => {
   })
 }
 
-const editMemberInDb = (memberId, name, mailAddress, password, deptId, jobCategoryId, enteringCompanyAt) => {
+const editMemberInDb = (memberId, name, mailAddress, deptId, jobCategoryId, enteringCompanyAt) => {
   return new Promise((resolve, reject) => {
     const sql = `
       UPDATE MEMBER 
       SET
         name = ?, 
         mail_address = ?, 
-        password = ?,
         dept_id = ?, 
         job_category_id = ?, 
         entering_company_at = ?
       WHERE id = ?
     `
-    connection.query(
-      sql,
-      [name, mailAddress, password, deptId, jobCategoryId, enteringCompanyAt, memberId],
-      (err, result) => {
-        if (err) {
-          reject(new Error(MASSAGE.MEMBER.MASSAGE_002))
-        } else {
-          resolve(result)
-        }
+    connection.query(sql, [name, mailAddress, deptId, jobCategoryId, enteringCompanyAt, memberId], (err, result) => {
+      if (err) {
+        reject(new Error(MASSAGE.MEMBER.MASSAGE_002))
+      } else {
+        resolve(result)
       }
-    )
+    })
   })
 }
 
 const editMember = (req, res) => {
   const memberId = req.params.memberId
-  const { name, mailAddress, password, deptId, jobCategoryId, enteringCompanyAt } = req.body
+  const { name, mailAddress, deptId, jobCategoryId, enteringCompanyAt } = req.body
 
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
+  }
   // バリデーションチェック
   if (!name) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_007 })
   }
   if (!mailAddress) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_008 })
-  }
-  if (!password) {
-    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_009 })
   }
 
   checkOtherMailExists(memberId, mailAddress)
@@ -78,7 +74,7 @@ const editMember = (req, res) => {
       if (!combinationExists) {
         throw new Error(MASSAGE.MEMBER.MASSAGE_013)
       }
-      return editMemberInDb(memberId, name, mailAddress, password, deptId, jobCategoryId, enteringCompanyAt)
+      return editMemberInDb(memberId, name, mailAddress, deptId, jobCategoryId, enteringCompanyAt)
     })
     .then((result) => {
       if (result.affectedRows === 0) {
@@ -91,7 +87,7 @@ const editMember = (req, res) => {
         console.error('Error: ', err)
         sendResponse(res, 500, { message: err.message })
       } else {
-        sendResponse(res, 400, { message: err.message })
+        sendResponse(res, 401, { message: err.message })
       }
     })
 }

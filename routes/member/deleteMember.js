@@ -5,6 +5,11 @@ const MASSAGE = require('../../common/message')
 const deleteMember = (req, res) => {
   const memberId = req.params.memberId
 
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
+    return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
+  }
+
   const sql = 'UPDATE MEMBER SET deleted_at = NOW() WHERE id = ?'
 
   connection.query(sql, [memberId], (err, result) => {
@@ -13,7 +18,7 @@ const deleteMember = (req, res) => {
       return sendResponse(res, 500, { message: MASSAGE.MEMBER.MASSAGE_002 })
     }
     if (result.affectedRows === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_003 })
+      return sendResponse(res, 401, { message: MASSAGE.MEMBER.MASSAGE_003 })
     }
     sendResponse(res, 200, { message: MASSAGE.MEMBER.MASSAGE_006 })
   })

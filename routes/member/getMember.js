@@ -5,8 +5,8 @@ const MASSAGE = require('../../common/message')
 const getMember = (req, res) => {
   const memberId = req.params.memberId
 
-  // パラメーターの検証
-  if (isNaN(memberId) || memberId < 1) {
+  // memberId が数値でない場合、エラーを返す
+  if (!Number.isInteger(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
@@ -31,7 +31,7 @@ const getMember = (req, res) => {
     }
 
     if (result.length === 0) {
-      return sendResponse(res, 404, { message: MASSAGE.MEMBER.MASSAGE_003 })
+      return sendResponse(res, 401, { message: MASSAGE.MEMBER.MASSAGE_003 })
     }
 
     const member = {
