@@ -3,10 +3,10 @@ const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
 const getTraining = (req, res) => {
-  const trainingId = req.params.trainingId
+  const trainingId = parseInt(req.params.trainingId, 10)
 
-  // trainingId が数値でない場合、エラーを返す
-  if (!Number.isInteger(trainingId)) {
+  // trainingId が数値でない、または NaN の場合、エラーを返す
+  if (isNaN(trainingId)) {
     return sendResponse(res, 400, { message: MASSAGE.TRAINING.MASSAGE_007 })
   }
 

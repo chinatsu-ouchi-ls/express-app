@@ -3,10 +3,10 @@ const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 
 const deleteMember = (req, res) => {
-  const memberId = req.params.memberId
+  const memberId = parseInt(req.params.memberId, 10)
 
-  // memberId が数値でない場合、エラーを返す
-  if (!Number.isInteger(memberId)) {
+  // memberId が数値でない、または NaN の場合、エラーを返す
+  if (isNaN(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
