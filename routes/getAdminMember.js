@@ -6,10 +6,10 @@ const router = express.Router()
 
 // 特定のメンバーの詳細情報と研修の一覧を取得
 router.get('/:memberId', (req, res) => {
-  const memberId = req.params.memberId
+  const memberId = parseInt(req.params.memberId, 10)
 
-  // memberId が数値でない場合、エラーを返す
-  if (!Number.isInteger(memberId)) {
+  // memberId が数値でない、または NaN の場合、エラーを返す
+  if (isNaN(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
 
@@ -47,8 +47,15 @@ router.get('/:memberId', (req, res) => {
       m.enquete_url AS enqueteUrl,
       m.passing_score AS passingScore,
       m.best_score AS bestScore,
-      IFNULL(utc.is_completion, 0) AS testStatus,
-      IFNULL(uec.id, 0) AS enqueteStatus,
+      CASE
+        WHEN utc.is_completion IS NULL THEN 0
+        WHEN utc.is_completion = 1 THEN 1
+        ELSE 2
+      END AS testStatus,
+      CASE
+        WHEN uec.updated_at IS NULL THEN 0
+        ELSE 1
+      END AS enqueteStatus,
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt

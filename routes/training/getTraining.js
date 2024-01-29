@@ -35,7 +35,15 @@ const getTraining = (req, res) => {
       jc.name AS jobCategoryName,
       u.entering_company_at AS enteringCompanyAt,
       utc.test_score AS testScore,
-      utc.is_completion AS testStatus,
+      CASE
+        WHEN utc.is_completion IS NULL THEN 0
+        WHEN utc.is_completion = 1 THEN 1
+        ELSE 2
+      END AS testStatus,
+      CASE
+        WHEN uec.updated_at IS NULL THEN 0
+        ELSE 1
+      END AS enqueteStatus,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt,
     CASE
@@ -92,8 +100,8 @@ const getTraining = (req, res) => {
             name: row.jobCategoryName,
           },
           enteringCompanyAt: row.enteringCompanyAt,
-          testStatus: row.testStatus || 0,
-          enqueteStatus: row.enqueteUpdateAt ? 1 : 0,
+          testStatus: row.testStatus,
+          enqueteStatus: row.enqueteStatus,
           testScore: row.testScore,
           testUpdateAt: row.testUpdateAt,
           enqueteUpdateAt: row.enqueteUpdateAt,

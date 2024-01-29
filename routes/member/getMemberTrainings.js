@@ -25,8 +25,12 @@ const getMemberTrainings = (req, res) => {
       m.enquete_url AS enqueteUrl,
       m.passing_score AS passingScore,
       m.best_score AS bestScore,
-      IFNULL(utc.is_completion, 0) AS testStatus,
-      IFNULL(uec.id, 0) AS enqueteStatus,
+      CASE
+        WHEN utc.is_completion IS NULL THEN 0
+        WHEN utc.is_completion = 1 THEN 1
+        WHEN utc.is_completion = 0 THEN 2
+      END AS testStatus,
+      CASE WHEN uec.id IS NOT NULL THEN 1 ELSE 0 END AS enqueteStatus,
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
       uec.updated_at AS enqueteUpdateAt,
