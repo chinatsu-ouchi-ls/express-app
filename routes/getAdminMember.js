@@ -2,6 +2,8 @@ const express = require('express')
 const { connection } = require('../aws/connection')
 const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
+const formatDateToYYYYMMDD = require('../common/formatDateToYYYYMMDD')
+const formatDateToYYYYMMDDHHMMSS = require('../common/formatDateToYYYYMMDDHHMMSS')
 const router = express.Router()
 
 // 特定のメンバーの詳細情報と研修の一覧を取得
@@ -100,8 +102,12 @@ router.get('/:memberId', (req, res) => {
             id: memberResult[0].job_category_id,
             name: memberResult[0].job_category_name,
           },
-          enteringCompanyAt: memberResult[0].entering_company_at,
-          trainings: trainingsResult,
+          enteringCompanyAt: formatDateToYYYYMMDD(memberResult[0].entering_company_at),
+          trainings: trainingsResult.map((trainingResult) => ({
+            ...trainingResult,
+            testUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.testUpdateAt),
+            enqueteUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.enqueteUpdateAt),
+          })),
         },
       }
       sendResponse(res, 200, response)

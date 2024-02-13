@@ -1,6 +1,7 @@
 const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
+const formatDateToYYYYMMDD = require('../../common/formatDateToYYYYMMDD')
 
 const getMembers = (req, res) => {
   const sql = `
@@ -42,7 +43,7 @@ const getMembers = (req, res) => {
         id: member.job_category_id,
         name: member.job_category_name,
       },
-      enteringCompanyAt: member.entering_company_at,
+      enteringCompanyAt: formatDateToYYYYMMDD(member.entering_company_at),
     }))
 
     sendResponse(res, 200, { members })
