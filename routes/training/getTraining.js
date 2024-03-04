@@ -118,7 +118,7 @@ const getTraining = (req, res) => {
     const training = {
       id: trainingBaseInfo.id,
       name: trainingBaseInfo.name,
-      isRequired: trainingBaseInfo.isRequired === 1,
+      isRequired: trainingBaseInfo.isRequired,
       category: {
         id: trainingBaseInfo.categoryId,
         name: trainingBaseInfo.categoryName,

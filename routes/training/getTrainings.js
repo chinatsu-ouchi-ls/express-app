@@ -49,7 +49,7 @@ const getTrainings = (req, res) => {
       return {
         id: row.id,
         name: row.name,
-        isRequired: row.isRequired === 1,
+        isRequired: row.isRequired,
         category: {
           id: row.categoryId,
           name: row.categoryName,
