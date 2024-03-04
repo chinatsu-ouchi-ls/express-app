@@ -60,7 +60,8 @@ router.get('/:memberId', (req, res) => {
       END AS enqueteStatus,
       utc.test_score AS testScore,
       utc.updated_at AS testUpdateAt,
-      uec.updated_at AS enqueteUpdateAt
+      uec.updated_at AS enqueteUpdateAt,
+      DATE_FORMAT(DATE_ADD(u.entering_company_at, INTERVAL m.indication_period MONTH), '%Y/%m/%d %H:%i:%s') AS timeLimitAt
     FROM MEMBER u
     JOIN TRAINING_JOB_CATEGORY_VIEWABLE mjcv ON mjcv.job_category_id = u.job_category_id
     JOIN TRAINING m ON m.id = mjcv.training_id
@@ -104,7 +105,24 @@ router.get('/:memberId', (req, res) => {
           },
           enteringCompanyAt: formatDateToYYYYMMDD(memberResult[0].entering_company_at),
           trainings: trainingsResult.map((trainingResult) => ({
-            ...trainingResult,
+            id: trainingResult.id,
+            name: trainingResult.name,
+            isRequired: trainingResult.isRequired,
+            category: {
+              id: trainingResult.categoryId,
+              name: trainingResult.categoryName,
+            },
+            timeLimitAt: formatDateToYYYYMMDD(trainingResult.timeLimitAt),
+            indicationTime: trainingResult.indicationTime,
+            media: trainingResult.media,
+            url: trainingResult.url,
+            testUrl: trainingResult.testUrl,
+            enqueteUrl: trainingResult.enqueteUrl,
+            passingScore: trainingResult.passingScore,
+            bestScore: trainingResult.bestScore,
+            testStatus: trainingResult.testStatus,
+            enqueteStatus: trainingResult.enqueteStatus,
+            testScore: trainingResult.testScore,
             testUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.testUpdateAt),
             enqueteUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.enqueteUpdateAt),
           })),
