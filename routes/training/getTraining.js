@@ -1,6 +1,8 @@
 const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
+const formatDateToYYYYMMDD = require('../../common/formatDateToYYYYMMDD')
+const formatDateToYYYYMMDDHHMMSS = require('../../common/formatDateToYYYYMMDDHHMMSS')
 
 const getTraining = (req, res) => {
   const trainingId = parseInt(req.params.trainingId, 10)
@@ -99,13 +101,13 @@ const getTraining = (req, res) => {
             id: row.jobCategoryId,
             name: row.jobCategoryName,
           },
-          enteringCompanyAt: row.enteringCompanyAt,
+          enteringCompanyAt: formatDateToYYYYMMDD(row.enteringCompanyAt),
           testStatus: row.testStatus,
           enqueteStatus: row.enqueteStatus,
           testScore: row.testScore,
-          testUpdateAt: row.testUpdateAt,
-          enqueteUpdateAt: row.enqueteUpdateAt,
-          timeLimitAt: row.timeLimitAt,
+          testUpdateAt: formatDateToYYYYMMDDHHMMSS(row.testUpdateAt),
+          enqueteUpdateAt: formatDateToYYYYMMDDHHMMSS(row.enqueteUpdateAt),
+          timeLimitAt: formatDateToYYYYMMDD(row.timeLimitAt),
         })
       }
       return acc
