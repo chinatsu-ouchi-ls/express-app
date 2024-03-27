@@ -52,7 +52,7 @@ const editMember = (req, res) => {
   const { name, mailAddress, deptId, jobCategoryId, enteringCompanyAt } = req.body
 
   // memberId が数値でない場合、エラーを返す
-  if (!Number.isInteger(memberId)) {
+  if (isNaN(memberId)) {
     return sendResponse(res, 400, { message: MASSAGE.MEMBER.MASSAGE_001 })
   }
   // バリデーションチェック

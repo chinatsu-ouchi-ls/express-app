@@ -4,9 +4,7 @@ const formatDateToYYYYMMDD = (dateString) => {
     return null
   }
 
-  // UTC日付を日本時間に変換（+9時間）
   const date = new Date(dateString)
-  date.setHours(date.getHours() + 9) // UTCからJSTへ変換
 
   const year = date.getFullYear()
   // getMonth() は0から始まるため、1を足す

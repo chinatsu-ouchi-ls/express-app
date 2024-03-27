@@ -4,7 +4,6 @@ const formatDateToYYYYMMDDHHMMSS = (dateTimeString) => {
   if (!dateTimeString || dateTimeString === '') return null
 
   const date = new Date(dateTimeString)
-  date.setHours(date.getHours() + 9) // UTCからJSTに変換（+9時間）
 
   const year = date.getFullYear()
   const month = ('0' + (date.getMonth() + 1)).slice(-2)
