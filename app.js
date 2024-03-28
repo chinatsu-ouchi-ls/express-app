@@ -3,14 +3,15 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const app = express()
-// const rateLimit = require('express-rate-limit')
-// リクエスト制限を設定
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15分
-//   max: 30, // 15分間に100リクエストまで
-// })
-// アプリケーションにリミッターを適用
-// app.use(limiter)
+const rateLimit = require('express-rate-limit')
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分間
+  max: 100, // 15分間に100リクエストまで
+  message: 'Too many requests from this IP, please try again after 15 minutes',
+})
+
+app.use(limiter)
 
 app.use(cors()) // CORSを全てのルートに適用する
 app.use(express.json()) // JSONミドルウェアを追加する

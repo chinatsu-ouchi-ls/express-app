@@ -6,6 +6,7 @@ const connection = mysql.createConnection({
   password: process.env.RDS_PASSWORD,
   database: process.env.RDS_DATABASE,
   port: process.env.RDS_PORT,
+  charset: 'utf8mb4',
 })
 
 module.exports = { connection }
