@@ -68,7 +68,7 @@ router.get('/:memberId', (req, res) => {
     LEFT JOIN CATEGORY c ON c.id = m.category_id
     LEFT JOIN MEMBER_TEST_COMPLETION utc ON utc.member_id = u.id AND utc.training_id = m.id
     LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON uec.member_id = u.id AND uec.training_id = m.id
-    WHERE u.id = ?
+    WHERE u.id = ? AND m.deleted_at IS NULL
   `
 
   connection.query(memberSql, [memberId], (err, memberResult) => {

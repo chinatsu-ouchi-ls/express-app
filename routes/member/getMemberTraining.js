@@ -47,7 +47,7 @@ const getMemberTraining = (req, res) => {
     LEFT JOIN MEMBER u ON u.id = ?
     LEFT JOIN MEMBER_TEST_COMPLETION utc ON utc.training_id = m.id AND utc.member_id = u.id
     LEFT JOIN MEMBER_ENQUETE_COMPLETION uec ON uec.training_id = m.id AND uec.member_id = u.id
-    WHERE m.id = ?
+    WHERE m.id = ? AND m.deleted_at IS NULL
   `
   // SQLクエリを実行して研修詳細情報を取得
   connection.query(sql, [memberId, trainingId], (err, result) => {
