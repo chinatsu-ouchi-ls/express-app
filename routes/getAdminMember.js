@@ -4,6 +4,7 @@ const sendResponse = require('../common/responseHandler')
 const MASSAGE = require('../common/message')
 const formatDateToYYYYMMDD = require('../common/formatDateToYYYYMMDD')
 const formatDateToYYYYMMDDHHMMSS = require('../common/formatDateToYYYYMMDDHHMMSS')
+const formatDateToJstYYYYMMDDHHMMSS = require('../common/formatDateToJstYYYYMMDDHHMMSS')
 const router = express.Router()
 
 // 特定のメンバーの詳細情報と研修の一覧を取得
@@ -123,8 +124,8 @@ router.get('/:memberId', (req, res) => {
             testStatus: trainingResult.testStatus,
             enqueteStatus: trainingResult.enqueteStatus,
             testScore: trainingResult.testScore,
-            testUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.testUpdateAt),
-            enqueteUpdateAt: formatDateToYYYYMMDDHHMMSS(trainingResult.enqueteUpdateAt),
+            testUpdateAt: formatDateToJstYYYYMMDDHHMMSS(trainingResult.testUpdateAt),
+            enqueteUpdateAt: formatDateToJstYYYYMMDDHHMMSS(trainingResult.enqueteUpdateAt),
           })),
         },
       }

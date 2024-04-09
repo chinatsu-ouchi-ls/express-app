@@ -3,6 +3,7 @@ const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 const formatDateToYYYYMMDD = require('../../common/formatDateToYYYYMMDD')
 const formatDateToYYYYMMDDHHMMSS = require('../../common/formatDateToYYYYMMDDHHMMSS')
+const formatDateToJstYYYYMMDDHHMMSS = require('../../common/formatDateToJstYYYYMMDDHHMMSS')
 
 const getTraining = (req, res) => {
   const trainingId = parseInt(req.params.trainingId, 10)
@@ -105,8 +106,8 @@ const getTraining = (req, res) => {
           testStatus: row.testStatus,
           enqueteStatus: row.enqueteStatus,
           testScore: row.testScore,
-          testUpdateAt: formatDateToYYYYMMDDHHMMSS(row.testUpdateAt),
-          enqueteUpdateAt: formatDateToYYYYMMDDHHMMSS(row.enqueteUpdateAt),
+          testUpdateAt: formatDateToJstYYYYMMDDHHMMSS(row.testUpdateAt),
+          enqueteUpdateAt: formatDateToJstYYYYMMDDHHMMSS(row.enqueteUpdateAt),
           timeLimitAt: formatDateToYYYYMMDD(row.timeLimitAt),
         })
       }

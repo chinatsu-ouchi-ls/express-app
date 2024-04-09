@@ -7,7 +7,7 @@ const rateLimit = require('express-rate-limit')
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分間
-  max: 100, // 15分間に100リクエストまで
+  max: 1000, // 15分間に1000リクエストまで
   message: 'Too many requests from this IP, please try again after 15 minutes',
 })
 

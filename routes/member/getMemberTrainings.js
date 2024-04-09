@@ -2,6 +2,7 @@ const { connection } = require('../../aws/connection')
 const sendResponse = require('../../common/responseHandler')
 const MASSAGE = require('../../common/message')
 const formatDateToYYYYMMDD = require('../../common/formatDateToYYYYMMDD')
+const formatDateToJstYYYYMMDD = require('../../common/formatDateToJstYYYYMMDD')
 
 const getMemberTrainings = (req, res) => {
   const memberId = parseInt(req.params.memberId, 10)
@@ -75,8 +76,8 @@ const getMemberTrainings = (req, res) => {
       testStatus: row.testStatus,
       enqueteStatus: row.enqueteStatus,
       testScore: row.testScore,
-      testUpdateAt: formatDateToYYYYMMDD(row.testUpdateAt),
-      enqueteUpdateAt: formatDateToYYYYMMDD(row.enqueteUpdateAt),
+      testUpdateAt: formatDateToJstYYYYMMDD(row.testUpdateAt),
+      enqueteUpdateAt: formatDateToJstYYYYMMDD(row.enqueteUpdateAt),
     }))
     sendResponse(res, 200, { trainings })
   })
