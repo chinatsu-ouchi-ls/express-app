@@ -12,8 +12,8 @@ router.post('/', (req, res) => {
     return sendResponse(res, 400, { message: MASSAGE.LOGIN.MASSAGE_004 })
   }
 
-  // 管理者ではない、かつ削除されていないメンバーを取得するSQLクエリ
-  const sql = 'SELECT id, password, is_admin, deleted_at FROM MEMBER WHERE mail_address = ?'
+  // 管理者ではない、かつ削除されていない（退職していない）メンバーを取得するSQLクエリ
+  const sql = 'SELECT id, password, is_admin FROM MEMBER WHERE mail_address = ? AND deleted_at IS NULL AND is_admin = 0'
 
   connection.query(sql, [mailAddress], (err, results) => {
     if (err) {
@@ -26,16 +26,6 @@ router.post('/', (req, res) => {
     }
 
     const member = results[0]
-
-    // メンバーが削除済み（退職済み）の場合
-    if (member.deleted_at !== null) {
-      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_010 })
-    }
-
-    // 管理者の場合はエラーを返す
-    if (member.is_admin === 1) {
-      return sendResponse(res, 401, { message: MASSAGE.LOGIN.MASSAGE_005 })
-    }
 
     // パスワードの検証（平文の比較）
     if (password !== member.password) {
